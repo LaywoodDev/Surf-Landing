@@ -1,0 +1,60 @@
+.product-gallery {
+  padding: 64px 0;
+
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  }
+}
+
+.product-header {
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 40px;
+    margin-bottom: 12px;
+
+    @media (max-width: 768px) {
+      font-size: 32px;
+    }
+  }
+
+  p {
+    max-width: 480px;
+    font-size: 18px;
+    color: var(--text);
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+}
+
+.product-phones {
+  --phone-w: min(290px, 30vw);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  .product-phone {
+    position: relative;
+    width: var(--phone-w);
+
+    img {
+      width: 100%;
+      transition: filter 0.3s ease;
+    }
+  }
+
+  &:hover .product-phone:not(:hover) img {
+    filter: grayscale(1) contrast(0.5) brightness(1.15);
+  }
+
+  .product-phone + .product-phone {
+    margin-left: calc(var(--phone-w) * -0.28);
+
+    @media (max-width: 768px) {
+      margin-left: calc(var(--phone-w) * -0.45);
+    }
+  }
+}

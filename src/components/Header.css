@@ -1,0 +1,96 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    padding: 16px 0;
+  }
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header .logo-icon {
+  height: 16px;
+  width: auto;
+}
+
+.header .logo-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.header-nav ul {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.header-nav li {
+  display: flex;
+  align-items: center;
+
+  &:not(:last-child)::after {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+    margin: 0 20px;
+
+    @media (max-width: 768px) {
+      margin: 0 12px;
+    }
+
+    @media (max-width: 640px) {
+      height: 14px;
+      margin: 0 8px;
+    }
+  }
+}
+
+.header-nav a {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.2s;
+
+  &:hover,
+  &.active {
+    color: var(--accent-blue);
+  }
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
+}
+
+.header-login {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-heading);
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: var(--gray-bg);
+    border-color: var(--text);
+  }
+
+  @media (max-width: 640px) {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
