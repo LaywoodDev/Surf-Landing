@@ -1,10 +1,17 @@
+import { useT } from '../context/LangContext'
+
 export function PhoneShowcase() {
+  const t = useT()
+
   return (
-    <section className="phone-showcase" aria-label="App preview">
+    <section className="phone-showcase" aria-label={t('App preview', 'Превью приложения')}>
       <div className="phone-card phone-card--beige">
         <img
           src="/Hero/phone-1.png"
-          alt="Surf call screen showing an active audio call"
+          alt={t(
+            'Surf call screen showing an active audio call',
+            'Экран Surf с активным аудиозвонком'
+          )}
           width="399"
           height="546"
         />
@@ -13,7 +20,10 @@ export function PhoneShowcase() {
       <div className="phone-card phone-card--gray">
         <img
           src="/Hero/phone-2.png"
-          alt="Surf upgrade to Pro screen held in hand"
+          alt={t(
+            'Surf upgrade to Pro screen held in hand',
+            'Экран Surf с переходом на Pro в руке'
+          )}
           width="468"
           height="534"
         />

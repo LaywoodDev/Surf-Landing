@@ -13,6 +13,7 @@
   font-size: 64px;
   line-height: 110%;
   margin-bottom: 24px;
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 
   @media (max-width: 1024px) {
     font-size: 48px;
@@ -43,6 +44,7 @@
   color: var(--text);
   max-width: 560px;
   margin: 0 auto 32px;
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 
   @media (max-width: 640px) {
     font-size: 17px;
@@ -55,6 +57,13 @@
   gap: 16px;
   flex-wrap: wrap;
   justify-content: center;
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+
+  @media (max-width: 640px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .hero-button {
@@ -68,6 +77,12 @@
 
   &:hover {
     opacity: 0.85;
+  }
+
+  @media (max-width: 640px) {
+    width: 100%;
+    padding: 14px 32px;
+    text-align: center;
   }
 }
 
@@ -83,30 +98,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: #fff;
   border: 3px solid #fff;
   margin-left: -12px;
+  overflow: hidden;
 
   &:first-child {
     margin-left: 0;
   }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
-.avatar-1 {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-}
-
-.avatar-2 {
-  background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
-}
-
-.avatar-3 {
-  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-}
-
-.avatar-4 {
+.avatar-more {
   background: var(--accent-blue);
-  font-size: 15px;
 }

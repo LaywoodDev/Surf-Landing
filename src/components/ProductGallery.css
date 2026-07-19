@@ -46,15 +46,25 @@
     }
   }
 
-  &:hover .product-phone:not(:hover) img {
+  &:has(.product-phone:hover) .product-phone:not(:hover) img {
     filter: grayscale(1) contrast(0.5) brightness(1.15);
   }
 
   .product-phone + .product-phone {
     margin-left: calc(var(--phone-w) * -0.28);
+  }
 
-    @media (max-width: 768px) {
-      margin-left: calc(var(--phone-w) * -0.45);
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+
+    .product-phone {
+      width: auto;
+    }
+
+    .product-phone + .product-phone {
+      margin-left: 0;
     }
   }
 }

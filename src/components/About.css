@@ -1,0 +1,95 @@
+.about-page {
+  flex: 1;
+}
+
+.about-hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 96px 0 64px;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 56px 0 40px;
+  }
+}
+
+.about-eyebrow {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+  margin-bottom: 16px;
+}
+
+.about-title {
+  font-size: 56px;
+  line-height: 115%;
+  margin-bottom: 32px;
+
+  @media (max-width: 1024px) {
+    font-size: 44px;
+  }
+
+  @media (max-width: 640px) {
+    font-size: 32px;
+  }
+}
+
+.about-text {
+  font-size: 20px;
+  line-height: 160%;
+  color: var(--text);
+
+  @media (max-width: 640px) {
+    font-size: 17px;
+  }
+}
+
+.about-text + .about-text {
+  margin-top: 20px;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 0 0 96px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    padding-bottom: 64px;
+  }
+}
+
+.stat-card {
+  background: var(--gray-bg);
+  border-radius: 24px;
+  padding: 32px;
+
+  @media (max-width: 640px) {
+    padding: 24px;
+  }
+}
+
+.stat-value {
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+
+  @media (max-width: 640px) {
+    font-size: 44px;
+  }
+}
+
+.stat-label {
+  font-size: 16px;
+  color: var(--text);
+}

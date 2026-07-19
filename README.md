@@ -1,32 +1,88 @@
-# React + TypeScript + Vite
+# Surf Landing
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Лендинг мессенджера **Surf** — маркетинговый сайт с блогом, страницей ивентов и админкой для управления контентом.
 
-Currently, two official plugins are available:
+## Стек
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Фронтенд:** React 19, TypeScript, Vite, React Router 7
+- **Бэкенд:** Node.js + Express (раздаёт статику из `dist/` и API контента)
+- **Редактор в админке:** Tiptap (Markdown)
+- **Линтер:** Oxlint
 
-## React Compiler
+## Быстрый старт (разработка)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Vite поднимет сайт на `http://localhost:5173`. В dev-режиме контент (посты, ивенты) берётся из локальных данных `src/data/`, админка без бэкенда недоступна.
+
+## Продакшн
+
+```bash
+cp server/.env.example server/.env   # заполнить переменные (см. ниже)
+npm start                            # сборка + запуск сервера
+```
+
+Сервер поднимется на `http://localhost:3000`: раздаёт собранный фронтенд из `dist/`, API контента и авторизацию админки. Контент хранится в `server/data/content.json` (создаётся автоматически из сидов `server/seed.js` при первом запуске; дальше источник правды — сам JSON-файл).
+
+## Переменные окружения (`server/.env`)
+
+| Переменная | Описание |
+|---|---|
+| `ADMIN_PASSWORD_HASH` | **Обязательно.** SHA-256 хэш пароля админки. Посчитать: `printf 'ваш-пароль' \| sha256sum` |
+| `PROXYAPI_KEY` | Ключ ProxyAPI для AI-ассистента в админке (https://proxyapi.ru → Ключи API) |
+| `AI_MODEL` | Модель для AI-ассистента (по умолчанию `gpt-4o`) |
+| `COOKIE_SECURE` | Установите `1` на проде с HTTPS — включает Secure-куку сессии |
+| `PORT` | Порт сервера (по умолчанию `3000`) |
+
+## Страницы
+
+| Роут | Описание |
+|---|---|
+| `/` | Главная: hero, галерея продукта, тарифы |
+| `/about` | О продукте |
+| `/blog`, `/blog/:slug` | Блог и статьи |
+| `/events` | Ивенты |
+| `/opus` | Страница Opus |
+| `/agreement`, `/contacts` | Юридические страницы |
+| `/admin` | Админка (требует авторизации) |
+
+## Админка
+
+Доступна только при запущенном бэкенде (`npm start` или `npm run server`).
+
+- Авторизация по паролю (сессия — cookie на 7 дней, лимит 5 попыток входа в минуту).
+- CRUD для постов блога и ивентов через API `/api/admin/*`.
+- AI-ассистент: генерирует черновик поста из сырого материала (текст, скриншоты) через ProxyAPI (нужен `PROXYAPI_KEY`, лимит 10 запросов в минуту).
+
+## Скрипты
+
+| Команда | Что делает |
+|---|---|
+| `npm run dev` | Dev-сервер Vite с HMR |
+| `npm run build` | Проверка типов (`tsc -b`) + сборка в `dist/` |
+| `npm run preview` | Превью собранного фронтенда |
+| `npm run server` | Запуск Express-сервера (читает `server/.env`) |
+| `npm start` | Сборка + запуск сервера (продакшн) |
+| `npm run lint` | Oxlint |
+
+## Структура проекта
+
+```
+├── src/
+│   ├── components/    # Header, Footer, Hero, Plans, PhoneShowcase и др.
+│   ├── pages/         # Страницы сайта + pages/admin/ — админка
+│   ├── context/       # ContentContext — посты/ивенты (API в проде, локальные данные в dev)
+│   └── data/          # Локальные данные постов и ивентов для dev-режима
+├── server/
+│   ├── index.js       # Express: статика + API контента и авторизации
+│   ├── seed.js        # Начальный контент для content.json
+│   └── data/          # content.json (создаётся при первом запуске)
+└── public/            # Статические ассеты (копируются в dist/ при сборке)
+```
+
+## Адаптивность
+
+Брейкпоинты: **1024px** (планшет), **768px** (мобильные), **640px** (маленькие экраны). На мобильных: бургер-меню в шапке, карусель тарифов со свайпом, сетки перестраиваются в один столбец. Стили — нативный CSS с вложенными `@media` в файлах компонентов.

@@ -1,50 +1,74 @@
+import { useLang, useT } from '../context/LangContext'
+
 export function Hero() {
+  const t = useT()
+  const { lang } = useLang()
+
+  const underline = (
+    <svg
+      className="highlight-underline"
+      viewBox="0 0 120 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M2 8 C 20 2, 40 2, 60 6 S 100 10, 118 4"
+        stroke="#4f8cff"
+        strokeWidth="4"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+
   return (
     <section className="hero-section" id="home">
       <h1 className="hero-title">
-        Messaging made{' '}
-        <span className="highlight">
-          simple
-          <svg
-            className="highlight-underline"
-            viewBox="0 0 120 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M2 8 C 20 2, 40 2, 60 6 S 100 10, 118 4"
-              stroke="#4f8cff"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-          </svg>
-        </span>{' '}
-        and freely with Surf.
+        {lang === 'ru' ? (
+          <>
+            Общение —{' '}
+            <span className="highlight">
+              просто
+              {underline}
+            </span>{' '}
+            и свободно, с Surf.
+          </>
+        ) : (
+          <>
+            Messaging made{' '}
+            <span className="highlight">
+              simple
+              {underline}
+            </span>{' '}
+            and freely with Surf.
+          </>
+        )}
       </h1>
 
       <p className="hero-subtitle">
-        Chat, share files, make audio calls, and stay in sync across mobile and
-        desktop — all in one clean app.
+        {t(
+          'Chat, share files, make audio calls, and stay in sync across mobile and desktop — all in one clean app.',
+          'Переписка, файлы, аудиозвонки и синхронизация между телефоном и компьютером — всё в одном удобном приложении.'
+        )}
       </p>
 
       <div className="hero-cta">
         <a href="https://surf-app.xyz" className="hero-button">
-          Get Started
+          {t('Get Started', 'Начать')}
         </a>
 
         <div className="hero-avatars">
-          <div className="avatar avatar-1" aria-hidden="true">
-            AS
+          <div className="avatar" aria-hidden="true">
+            <img src="/avatars/avatar-1.jpg" alt="" width="44" height="44" />
           </div>
-          <div className="avatar avatar-2" aria-hidden="true">
-            MK
+          <div className="avatar" aria-hidden="true">
+            <img src="/avatars/avatar-2.jpg" alt="" width="44" height="44" />
           </div>
-          <div className="avatar avatar-3" aria-hidden="true">
-            JL
+          <div className="avatar" aria-hidden="true">
+            <img src="/avatars/avatar-3.jpg" alt="" width="44" height="44" />
           </div>
-          <div className="avatar avatar-4" aria-hidden="true">
+          <div className="avatar avatar-more" aria-hidden="true">
             +2
           </div>
         </div>

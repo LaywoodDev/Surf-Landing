@@ -1,34 +1,39 @@
+import { Link } from 'react-router-dom'
 import { Logo } from './Logo'
-
-const footerLinks = [
-  {
-    title: 'Company',
-    links: [{ label: 'About', href: '#about' }],
-  },
-  {
-    title: 'Resources',
-    links: [
-      { label: 'Blog', href: '#blog' },
-      { label: 'Events', href: '#events' },
-    ],
-  },
-  {
-    title: 'Products',
-    links: [{ label: 'Opus', href: '#opus' }],
-  },
-  {
-    title: 'Terms and policies',
-    links: [
-      { label: 'User Agreement', href: '#agreement' },
-      { label: 'Contacts and Requisites', href: '#contacts' },
-    ],
-  },
-]
+import { useLang, useT } from '../context/LangContext'
 
 export function Footer() {
+  const t = useT()
+  const { lang, setLang } = useLang()
+
+  const footerLinks = [
+    {
+      title: t('Company', 'Компания'),
+      links: [{ label: t('About', 'О нас'), href: '/about' }],
+    },
+    {
+      title: t('Resources', 'Ресурсы'),
+      links: [
+        { label: t('Blog', 'Блог'), href: '/blog' },
+        { label: t('Events', 'Ивенты'), href: '/events' },
+      ],
+    },
+    {
+      title: t('Products', 'Продукты'),
+      links: [{ label: 'Opus', href: '/opus' }],
+    },
+    {
+      title: t('Terms and policies', 'Условия'),
+      links: [
+        { label: t('User Agreement', 'Соглашение'), href: '/agreement' },
+        { label: t('Contacts', 'Контакты'), href: '/contacts' },
+      ],
+    },
+  ]
+
   return (
     <footer className="footer">
-      <div className="footer-inner">
+      <div className="footer-inner" data-reveal>
         <Logo textClassName="footer-logo-text" />
 
         <nav className="footer-nav" aria-label="Footer navigation">
@@ -38,13 +43,34 @@ export function Footer() {
               <ul>
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a href={link.href}>{link.label}</a>
+                    {link.href.startsWith('/') ? (
+                      <Link to={link.href}>{link.label}</Link>
+                    ) : (
+                      <a href={link.href}>{link.label}</a>
+                    )}
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </nav>
+
+        <div className="footer-lang" role="group" aria-label="Language">
+          <button
+            type="button"
+            className={lang === 'en' ? 'active' : ''}
+            onClick={() => setLang('en')}
+          >
+            EN
+          </button>
+          <button
+            type="button"
+            className={lang === 'ru' ? 'active' : ''}
+            onClick={() => setLang('ru')}
+          >
+            RU
+          </button>
+        </div>
       </div>
     </footer>
   )

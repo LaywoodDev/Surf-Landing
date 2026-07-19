@@ -30,6 +30,7 @@
 .phone-card--beige {
   background: var(--beige);
   align-items: flex-end;
+  animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
 }
 
 .phone-card--beige img {
@@ -50,7 +51,7 @@
   background: var(--gray-bg);
   align-items: flex-end;
   justify-content: flex-start;
-  overflow: visible;
+  animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.7s both;
 }
 
 .phone-card--gray img {

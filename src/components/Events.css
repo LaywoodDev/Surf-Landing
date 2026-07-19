@@ -1,0 +1,392 @@
+.events-page {
+  flex: 1;
+  padding: 64px 0 96px;
+
+  @media (max-width: 768px) {
+    padding: 40px 0 64px;
+  }
+}
+
+/* --- Hero --- */
+
+.events-hero {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+
+  h1 {
+    font-size: 48px;
+    line-height: 115%;
+    margin-bottom: 16px;
+
+    @media (max-width: 768px) {
+      font-size: 34px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+  }
+}
+
+.events-hero-label {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+  margin-bottom: 16px;
+}
+
+.events-hero-subtitle {
+  font-size: 18px;
+  line-height: 150%;
+  color: var(--text);
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+/* --- Empty state --- */
+
+.events-empty {
+  margin-bottom: 72px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 56px;
+  }
+}
+
+/* --- Tags --- */
+
+.event-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.event-tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--gray-bg);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.event-tag-accent {
+  background: var(--accent-blue-light);
+  color: var(--accent-blue);
+}
+
+/* --- Register button --- */
+
+.event-register {
+  display: inline-block;
+  padding: 12px 40px;
+  border-radius: 999px;
+  background: var(--text-heading);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+/* --- Featured event --- */
+
+.event-featured {
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  margin-bottom: 72px;
+  box-shadow: var(--shadow);
+
+  h2 {
+    font-size: 30px;
+    line-height: 120%;
+    margin: 16px 0 12px;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 24px;
+    padding: 28px;
+    margin-bottom: 56px;
+  }
+}
+
+.event-featured-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--accent-blue-light);
+  color: var(--accent-blue);
+
+  @media (max-width: 768px) {
+    min-width: 0;
+  }
+}
+
+.event-featured-day {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 110%;
+  letter-spacing: -0.02em;
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+  }
+}
+
+.event-featured-month {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.event-featured-time {
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.event-featured-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.event-featured-description {
+  font-size: 17px;
+  line-height: 160%;
+  color: var(--text);
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+/* --- Sections --- */
+
+.events-section {
+  margin-bottom: 72px;
+
+  @media (max-width: 768px) {
+    margin-bottom: 56px;
+  }
+}
+
+.events-section-title {
+  font-size: 28px;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+}
+
+/* --- Timeline rows --- */
+
+.events-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+
+  &:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  h3 {
+    font-size: 20px;
+    line-height: 130%;
+    letter-spacing: -0.01em;
+    margin: 12px 0 8px;
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 150%;
+    color: var(--text);
+  }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+.event-row-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+}
+
+.event-row-day {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 110%;
+  letter-spacing: -0.02em;
+  color: var(--text-heading);
+}
+
+.event-row-month {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.event-row-body {
+  flex: 1;
+}
+
+/* Markdown-разметка в описаниях ивентов */
+.event-featured-description,
+.event-row-description {
+  p + p {
+    margin-top: 12px;
+  }
+
+  ul,
+  ol {
+    padding-left: 20px;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  a {
+    color: var(--accent-blue);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.event-row-register {
+  padding: 10px 28px;
+  border: 1px solid var(--text-heading);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-heading);
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: var(--text-heading);
+    color: #fff;
+  }
+}
+
+/* --- Past events --- */
+
+.events-past {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    font-size: 16px;
+
+    &:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    @media (max-width: 640px) {
+      flex-wrap: wrap;
+      gap: 4px 16px;
+    }
+  }
+}
+
+.event-past-date {
+  min-width: 72px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.event-past-title {
+  flex: 1;
+  color: var(--text-heading);
+  font-weight: 500;
+}
+
+.event-past-format {
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* --- Bottom CTA --- */
+
+.events-cta {
+  text-align: center;
+  padding: 56px 24px;
+  border-radius: 28px;
+  background: var(--accent-blue-light);
+
+  @media (max-width: 768px) {
+    padding: 40px 20px;
+    border-radius: 20px;
+  }
+
+  h2 {
+    font-size: 30px;
+    margin-bottom: 12px;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+
+  p {
+    max-width: 460px;
+    margin: 0 auto 28px;
+    font-size: 17px;
+    line-height: 155%;
+    color: var(--text);
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+}
