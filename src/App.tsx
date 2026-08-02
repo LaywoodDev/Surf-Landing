@@ -26,9 +26,12 @@ import { Events } from './pages/Events'
 import { Opus } from './pages/Opus'
 import { UserAgreement } from './pages/UserAgreement'
 import { Contacts } from './pages/Contacts'
-import { Docs } from './pages/Docs'
 import { AdminGate } from './pages/admin/AdminGate'
 import { Admin } from './pages/admin/Admin'
+
+const Docs = lazy(() =>
+  import('./pages/Docs').then((m) => ({ default: m.Docs }))
+)
 
 // Формы тащат за собой TipTap (~700 КБ) — грузим их только при входе в админку
 const AdminPostForm = lazy(() =>

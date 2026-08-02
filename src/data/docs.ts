@@ -9,9 +9,11 @@ export interface DocProblem {
   solution: string
 }
 
+export type DocGroup = 'start' | 'communication' | 'features' | 'settings' | 'help'
+
 export interface DocChapter {
   id: string
-  group: 'Старт' | 'Общение' | 'Возможности' | 'Настройки' | 'Справка'
+  group: DocGroup
   title: string
   summary: string
   access?: 'Free' | 'Free + Pro' | 'Pro'
@@ -26,7 +28,7 @@ export interface DocChapter {
 export const docsChapters: DocChapter[] = [
   {
     id: 'about',
-    group: 'Старт',
+    group: 'start',
     title: 'Краткое знакомство с Surf',
     summary: 'Что представляет собой продукт, где он работает и какие задачи решает.',
     access: 'Free + Pro',
@@ -53,7 +55,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'getting-started',
-    group: 'Старт',
+    group: 'start',
     title: 'Начало работы',
     summary: 'Регистрация, вход, восстановление доступа и установка Surf как приложения.',
     access: 'Free',
@@ -88,7 +90,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'profile',
-    group: 'Старт',
+    group: 'start',
     title: 'Профиль и аккаунт',
     summary: 'Личные данные, фотография, username и выход из аккаунта.',
     access: 'Free',
@@ -113,7 +115,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'personal-chats',
-    group: 'Общение',
+    group: 'communication',
     title: 'Личные чаты',
     summary: 'Поиск собеседника, переписка и управление историей чата.',
     access: 'Free',
@@ -143,7 +145,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'messages',
-    group: 'Общение',
+    group: 'communication',
     title: 'Сообщения и вложения',
     summary: 'Текст, форматирование, ответы, пересылка, медиа и документы.',
     access: 'Free + Pro',
@@ -172,7 +174,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'voice-messages',
-    group: 'Общение',
+    group: 'communication',
     title: 'Голосовые сообщения',
     summary: 'Запись, предпросмотр, подпись, воспроизведение и расшифровка.',
     access: 'Free + Pro',
@@ -198,7 +200,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'groups',
-    group: 'Общение',
+    group: 'communication',
     title: 'Группы, роли и разрешения',
     summary: 'Создание групп, приглашения, участники, роли и детальные права.',
     access: 'Free',
@@ -226,7 +228,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'polls',
-    group: 'Общение',
+    group: 'communication',
     title: 'Опросы',
     summary: 'Создание голосования в личных и групповых чатах.',
     access: 'Free',
@@ -238,7 +240,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'calls',
-    group: 'Общение',
+    group: 'communication',
     title: 'Аудиозвонки',
     summary: 'Личные и групповые звонки, микрофон, громкость и история событий.',
     access: 'Free',
@@ -254,7 +256,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'folders',
-    group: 'Возможности',
+    group: 'features',
     title: 'Папки и организация чатов',
     summary: 'Папки-фильтры, закрепление важных чатов, «Избранное» и уведомления.',
     access: 'Free + Pro',
@@ -267,7 +269,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'scheduled',
-    group: 'Возможности',
+    group: 'features',
     title: 'Отложенные сообщения',
     summary: 'Автоматическая отправка сообщения в выбранные дату и время.',
     access: 'Free',
@@ -279,7 +281,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'search-translation',
-    group: 'Возможности',
+    group: 'features',
     title: 'Поиск и перевод',
     summary: 'Поиск людей и сообщений, переход к результату и перевод текста.',
     access: 'Free + Pro',
@@ -292,7 +294,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'contacts',
-    group: 'Возможности',
+    group: 'features',
     title: 'Контакты и блокировка',
     summary: 'Список контактов и управление нежелательным общением.',
     access: 'Free',
@@ -304,7 +306,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'opus',
-    group: 'Возможности',
+    group: 'features',
     title: 'Opus — ИИ-ассистент',
     summary: 'Ответы, файлы, память, инструкции, напоминания и действия с разрешения пользователя.',
     access: 'Free + Pro',
@@ -325,7 +327,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'notifications',
-    group: 'Настройки',
+    group: 'settings',
     title: 'Уведомления',
     summary: 'Web Push, звуки, предпросмотр и отключение отдельных чатов.',
     access: 'Free',
@@ -337,7 +339,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'appearance',
-    group: 'Настройки',
+    group: 'settings',
     title: 'Оформление и интерфейс',
     summary: 'Язык, темы, акцент, формат времени, шрифты, обои и PWA-иконки.',
     access: 'Free + Pro',
@@ -353,7 +355,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'privacy',
-    group: 'Настройки',
+    group: 'settings',
     title: 'Приватность',
     summary: 'Видимость данных профиля, добавление в группы и индикатор набора.',
     access: 'Free',
@@ -366,7 +368,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'data-export',
-    group: 'Настройки',
+    group: 'settings',
     title: 'Экспорт данных',
     summary: 'Самостоятельное получение данных аккаунта в JSON или HTML.',
     access: 'Free',
@@ -379,7 +381,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'pro',
-    group: 'Настройки',
+    group: 'settings',
     title: 'Surf Pro',
     summary: 'Платная подписка, дополнительные ИИ-функции, персонализация и увеличенные лимиты.',
     access: 'Pro',
@@ -392,7 +394,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'faq',
-    group: 'Справка',
+    group: 'help',
     title: 'Частые вопросы',
     summary: 'Короткие ответы о платформе, звонках, Opus, данных и подписке.',
     details: [
@@ -406,7 +408,7 @@ export const docsChapters: DocChapter[] = [
   },
   {
     id: 'troubleshooting',
-    group: 'Справка',
+    group: 'help',
     title: 'Решение распространённых проблем',
     summary: 'Базовая диагностика подключения, браузера, PWA, звука и уведомлений.',
     details: [
@@ -419,4 +421,4 @@ export const docsChapters: DocChapter[] = [
   },
 ]
 
-export const docsGroups = ['Старт', 'Общение', 'Возможности', 'Настройки', 'Справка'] as const
+export const docsGroups: DocGroup[] = ['start', 'communication', 'features', 'settings', 'help']

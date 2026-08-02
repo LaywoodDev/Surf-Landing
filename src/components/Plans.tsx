@@ -51,7 +51,7 @@ export function Plans() {
     },
     {
       name: 'Pro',
-      price: '150',
+      price: '349',
       tagline: t('Break down the boundaries', 'Сними все границы'),
       features: [
         t('Opus in Chats', 'Opus в чатах'),

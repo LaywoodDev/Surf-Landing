@@ -5,10 +5,10 @@ export function About() {
   const t = useT()
 
   const stats = [
-    { value: '10M+', label: t('Active users', 'Активных пользователей') },
-    { value: '2B+', label: t('Messages sent monthly', 'Сообщений в месяц') },
-    { value: '120+', label: t('Countries', 'Стран') },
-    { value: '4.9', label: t('Average app rating', 'Средняя оценка приложения') },
+    { value: '-', label: t('Active users', 'Активных пользователей') },
+    { value: '-', label: t('Messages sent monthly', 'Сообщений в месяц') },
+    { value: '-', label: t('Countries', 'Стран') },
+    { value: '-', label: t('Average app rating', 'Средняя оценка приложения') },
   ]
 
   return (

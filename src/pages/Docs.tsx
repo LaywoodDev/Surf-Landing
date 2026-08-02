@@ -1,13 +1,29 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { docsChapters, docsGroups, type DocChapter } from '../data/docs'
+import { useLang, useT } from '../context/LangContext'
+import { docsChapters, docsGroups, type DocChapter, type DocGroup } from '../data/docs'
+import { docsChaptersEn } from '../data/docs.en'
+
+function useGroupLabels(): Record<DocGroup, string> {
+  const t = useT()
+  return {
+    start: t('Start', 'Старт'),
+    communication: t('Communication', 'Общение'),
+    features: t('Features', 'Возможности'),
+    settings: t('Settings', 'Настройки'),
+    help: t('Help', 'Справка'),
+  }
+}
 
 function Chapter({ chapter }: { chapter: DocChapter }) {
+  const t = useT()
+  const groupLabels = useGroupLabels()
+
   return (
     <section id={chapter.id} className="docs-chapter">
       <header className="docs-chapter-header">
         <div className="docs-chapter-meta">
-          <span>{chapter.group}</span>
+          <span>{groupLabels[chapter.group]}</span>
         </div>
         <h2>{chapter.title}</h2>
         <p>{chapter.summary}</p>
@@ -15,7 +31,7 @@ function Chapter({ chapter }: { chapter: DocChapter }) {
 
       {chapter.purpose && (
         <div className="docs-purpose">
-          <strong>Для чего нужна функция</strong>
+          <strong>{t('What this feature is for', 'Для чего нужна функция')}</strong>
           <p>{chapter.purpose}</p>
         </div>
       )}
@@ -24,7 +40,7 @@ function Chapter({ chapter }: { chapter: DocChapter }) {
         <div className="docs-platforms">
           {chapter.desktop && (
             <div className="docs-platform">
-              <h3>На компьютере</h3>
+              <h3>{t('On desktop', 'На компьютере')}</h3>
               <ol>
                 {chapter.desktop.map((step) => <li key={step}>{step}</li>)}
               </ol>
@@ -32,7 +48,7 @@ function Chapter({ chapter }: { chapter: DocChapter }) {
           )}
           {chapter.mobile && (
             <div className="docs-platform">
-              <h3>На телефоне</h3>
+              <h3>{t('On mobile', 'На телефоне')}</h3>
               <ol>
                 {chapter.mobile.map((step) => <li key={step}>{step}</li>)}
               </ol>
@@ -55,7 +71,7 @@ function Chapter({ chapter }: { chapter: DocChapter }) {
 
       {chapter.problems && (
         <div className="docs-troubles">
-          <h3>Если что-то не работает</h3>
+          <h3>{t('If something is not working', 'Если что-то не работает')}</h3>
           {chapter.problems.map((problem) => (
             <details key={problem.issue}>
               <summary>{problem.issue}</summary>
@@ -70,11 +86,15 @@ function Chapter({ chapter }: { chapter: DocChapter }) {
 
 export function Docs() {
   const [query, setQuery] = useState('')
-  const normalizedQuery = query.trim().toLocaleLowerCase('ru')
+  const { lang } = useLang()
+  const t = useT()
+  const groupLabels = useGroupLabels()
+  const chapters = lang === 'ru' ? docsChapters : docsChaptersEn
+  const normalizedQuery = query.trim().toLocaleLowerCase(lang)
 
   const results = useMemo(() => {
     if (!normalizedQuery) return []
-    return docsChapters.filter((chapter) => {
+    return chapters.filter((chapter) => {
       const searchableContent = [
         chapter.title,
         chapter.summary,
@@ -86,19 +106,21 @@ export function Docs() {
       ]
 
       return JSON.stringify(searchableContent)
-        .toLocaleLowerCase('ru')
+        .toLocaleLowerCase(lang)
         .includes(normalizedQuery)
     })
-  }, [normalizedQuery])
+  }, [chapters, lang, normalizedQuery])
 
   return (
     <main className="docs-page">
       <header className="docs-hero" data-reveal>
-        <p className="docs-eyebrow">Документация Surf</p>
-        <h1>Всё необходимое для работы с Surf</h1>
+        <p className="docs-eyebrow">{t('Surf documentation', 'Документация Surf')}</p>
+        <h1>{t('Everything you need to use Surf', 'Всё необходимое для работы с Surf')}</h1>
         <p className="docs-hero-text">
-          Инструкции для новых и опытных пользователей, описание возможностей
-          продукта и ответы на частые вопросы.
+          {t(
+            'Guides for new and experienced users, product feature explanations, and answers to common questions.',
+            'Инструкции для новых и опытных пользователей, описание возможностей продукта и ответы на частые вопросы.'
+          )}
         </p>
 
         <div className="docs-search-wrap">
@@ -110,8 +132,8 @@ export function Docs() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Найти функцию или инструкцию"
-            aria-label="Поиск по документации"
+            placeholder={t('Find a feature or guide', 'Найти функцию или инструкцию')}
+            aria-label={t('Search documentation', 'Поиск по документации')}
           />
         </div>
 
@@ -119,7 +141,7 @@ export function Docs() {
           <div className="docs-search-results" aria-live="polite">
             {results.length > 0 ? (
               <>
-                <p>Найдено разделов: {results.length}</p>
+                <p>{t('Sections found', 'Найдено разделов')}: {results.length}</p>
                 <div>
                   {results.map((chapter) => (
                     <a key={chapter.id} href={`#${chapter.id}`} onClick={() => setQuery('')}>
@@ -130,21 +152,24 @@ export function Docs() {
                 </div>
               </>
             ) : (
-              <p>По этому запросу ничего не найдено. Попробуйте другое слово.</p>
+              <p>{t(
+                'Nothing was found for this query. Try another term.',
+                'По этому запросу ничего не найдено. Попробуйте другое слово.'
+              )}</p>
             )}
           </div>
         )}
       </header>
 
       <div className="docs-layout">
-        <aside className="docs-sidebar" aria-label="Разделы документации">
+        <aside className="docs-sidebar" aria-label={t('Documentation sections', 'Разделы документации')}>
           <div className="docs-sidebar-inner">
-            <p className="docs-sidebar-title">Содержание</p>
+            <p className="docs-sidebar-title">{t('Contents', 'Содержание')}</p>
             {docsGroups.map((group) => (
               <div key={group} className="docs-nav-group">
-                <p>{group}</p>
+                <p>{groupLabels[group]}</p>
                 <nav>
-                  {docsChapters.filter((chapter) => chapter.group === group).map((chapter) => (
+                  {chapters.filter((chapter) => chapter.group === group).map((chapter) => (
                     <a key={chapter.id} href={`#${chapter.id}`}>{chapter.title}</a>
                   ))}
                 </nav>
@@ -154,15 +179,18 @@ export function Docs() {
         </aside>
 
         <article className="docs-content">
-          {docsChapters.map((chapter) => <Chapter key={chapter.id} chapter={chapter} />)}
+          {chapters.map((chapter) => <Chapter key={chapter.id} chapter={chapter} />)}
 
           <section className="docs-help">
             <div>
-              <p className="docs-section-label">Поддержка</p>
-              <h2>Не нашли ответ?</h2>
-              <p>Опишите проблему, устройство и последовательность действий. Никому не отправляйте пароль или код восстановления.</p>
+              <p className="docs-section-label">{t('Support', 'Поддержка')}</p>
+              <h2>{t('Still need help?', 'Не нашли ответ?')}</h2>
+              <p>{t(
+                'Describe the problem, your device, and the steps that caused it. Never send anyone your password or recovery code.',
+                'Опишите проблему, устройство и последовательность действий. Никому не отправляйте пароль или код восстановления.'
+              )}</p>
             </div>
-            <Link to="/contacts">Связаться с поддержкой</Link>
+            <Link to="/contacts">{t('Contact support', 'Связаться с поддержкой')}</Link>
           </section>
         </article>
       </div>
