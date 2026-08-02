@@ -9,6 +9,7 @@ import './components/Blog.css'
 import './components/Events.css'
 import './components/Opus.css'
 import './components/Legal.css'
+import './components/Docs.css'
 import './components/Admin.css'
 import './components/Footer.css'
 
@@ -25,6 +26,7 @@ import { Events } from './pages/Events'
 import { Opus } from './pages/Opus'
 import { UserAgreement } from './pages/UserAgreement'
 import { Contacts } from './pages/Contacts'
+import { Docs } from './pages/Docs'
 import { AdminGate } from './pages/admin/AdminGate'
 import { Admin } from './pages/admin/Admin'
 
@@ -91,6 +93,7 @@ function App() {
           <Route path="/opus" element={<Opus />} />
           <Route path="/agreement" element={<UserAgreement />} />
           <Route path="/contacts" element={<Contacts />} />
+          <Route path="/docs" element={<Docs />} />
           <Route element={<AdminGate />}>
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/blog/new" element={<AdminPostForm />} />

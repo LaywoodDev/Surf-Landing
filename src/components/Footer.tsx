@@ -14,6 +14,7 @@ export function Footer() {
     {
       title: t('Resources', 'Ресурсы'),
       links: [
+        { label: t('Documentation', 'Документация'), href: '/docs' },
         { label: t('Blog', 'Блог'), href: '/blog' },
         { label: t('Events', 'Ивенты'), href: '/events' },
       ],
