@@ -4,6 +4,7 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { get as getBlob, put as putBlob } from '@vercel/blob'
 import express from 'express'
 import { seedPosts, seedEvents } from './seed.js'
 
@@ -12,6 +13,16 @@ const ROOT = path.join(__dirname, '..')
 const DIST_DIR = path.join(ROOT, 'dist')
 const DATA_DIR = path.join(__dirname, 'data')
 const DATA_FILE = path.join(DATA_DIR, 'content.json')
+const BLOB_CONTENT_PATH = 'surf/content.json'
+const USE_BLOB_STORAGE = Boolean(
+  process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN
+)
+
+if (process.env.VERCEL === '1' && !USE_BLOB_STORAGE) {
+  console.warn(
+    'Vercel Blob не подключён — контент доступен только для чтения из сидов.'
+  )
+}
 
 const PORT = Number(process.env.PORT) || 3000
 const SESSION_COOKIE = 'surf_session'
@@ -93,24 +104,60 @@ Rules for the draft:
 
 // ---------- Хранилище контента ----------
 
-function loadContent() {
+function isValidContent(content) {
+  return Array.isArray(content?.posts) && Array.isArray(content?.events)
+}
+
+async function loadContent() {
+  if (USE_BLOB_STORAGE) {
+    try {
+      const result = await getBlob(BLOB_CONTENT_PATH, {
+        access: 'private',
+        useCache: false,
+      })
+      if (!result) return { posts: seedPosts, events: seedEvents }
+
+      const parsed = await new Response(result.stream).json()
+      return isValidContent(parsed)
+        ? parsed
+        : { posts: seedPosts, events: seedEvents }
+    } catch (error) {
+      console.error('Не удалось прочитать контент из Vercel Blob:', error)
+      throw error
+    }
+  }
+
   if (!fs.existsSync(DATA_FILE)) {
     const initial = { posts: seedPosts, events: seedEvents }
-    saveContent(initial)
+    await saveContent(initial)
     return initial
   }
   try {
     const parsed = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))
-    if (Array.isArray(parsed.posts) && Array.isArray(parsed.events)) {
-      return parsed
-    }
+    if (isValidContent(parsed)) return parsed
   } catch {
     // повреждённый файл — отдаём сиды, файл не трогаем
   }
   return { posts: seedPosts, events: seedEvents }
 }
 
-function saveContent(content) {
+async function saveContent(content) {
+  if (USE_BLOB_STORAGE) {
+    await putBlob(BLOB_CONTENT_PATH, JSON.stringify(content), {
+      access: 'private',
+      allowOverwrite: true,
+      contentType: 'application/json; charset=utf-8',
+    })
+    return
+  }
+
+  if (process.env.VERCEL === '1') {
+    const error = new Error('Vercel Blob is not configured')
+    error.statusCode = 503
+    error.publicMessage = 'Content storage is not configured'
+    throw error
+  }
+
   fs.mkdirSync(DATA_DIR, { recursive: true })
   const tmp = DATA_FILE + '.tmp'
   fs.writeFileSync(tmp, JSON.stringify(content, null, 2))
@@ -119,31 +166,37 @@ function saveContent(content) {
 
 // ---------- Сессии и rate limit ----------
 
-/** token -> expiresAt (ms) */
-const sessions = new Map()
+// Подписанная cookie не зависит от памяти конкретного serverless-инстанса.
+const SESSION_SECRET = process.env.SESSION_SECRET || PASSWORD_HASH
 /** ip -> number[] (timestamps неудачных попыток) */
 const loginAttempts = new Map()
 
 function createSession() {
-  const token = crypto.randomBytes(32).toString('hex')
-  sessions.set(token, Date.now() + SESSION_TTL_MS)
-  return token
+  const payload = `${Date.now() + SESSION_TTL_MS}.${crypto.randomBytes(16).toString('hex')}`
+  const signature = crypto
+    .createHmac('sha256', SESSION_SECRET)
+    .update(payload)
+    .digest('hex')
+  return `${payload}.${signature}`
 }
 
 function getSession(token) {
-  if (!token) return false
-  const expiresAt = sessions.get(token)
-  if (!expiresAt) return false
-  if (expiresAt < Date.now()) {
-    sessions.delete(token)
-    return false
-  }
-  sessions.set(token, Date.now() + SESSION_TTL_MS) // sliding expiration
-  return true
-}
+  if (typeof token !== 'string') return false
+  const [expiresAt, nonce, signature] = token.split('.')
+  if (!expiresAt || !nonce || !signature || !/^\d+$/.test(expiresAt)) return false
 
-function destroySession(token) {
-  sessions.delete(token)
+  const payload = `${expiresAt}.${nonce}`
+  const expected = crypto
+    .createHmac('sha256', SESSION_SECRET)
+    .update(payload)
+    .digest()
+  const received = Buffer.from(signature, 'hex')
+
+  return (
+    received.length === expected.length &&
+    crypto.timingSafeEqual(received, expected) &&
+    Number(expiresAt) > Date.now()
+  )
 }
 
 function isRateLimited(ip) {
@@ -195,7 +248,9 @@ function setSessionCookie(res, token) {
     'SameSite=Lax',
     `Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}`,
   ]
-  if (process.env.COOKIE_SECURE === '1') parts.push('Secure')
+  if (process.env.COOKIE_SECURE === '1' || process.env.VERCEL === '1') {
+    parts.push('Secure')
+  }
   res.setHeader('Set-Cookie', parts.join('; '))
 }
 
@@ -248,6 +303,10 @@ const app = express()
 app.disable('x-powered-by')
 app.use(express.json({ limit: '8mb' }))
 
+const asyncRoute = (handler) => (req, res, next) => {
+  Promise.resolve(handler(req, res, next)).catch(next)
+}
+
 // Авторизация
 app.post('/api/admin/login', (req, res) => {
   const ip = req.ip || 'unknown'
@@ -275,7 +334,6 @@ app.post('/api/admin/login', (req, res) => {
 })
 
 app.post('/api/admin/logout', (req, res) => {
-  destroySession(sessionToken(req))
   clearSessionCookie(res)
   res.json({ ok: true })
 })
@@ -285,83 +343,83 @@ app.get('/api/admin/me', requireAuth, (req, res) => {
 })
 
 // Публичный контент
-app.get('/api/content', (req, res) => {
-  res.json(loadContent())
-})
+app.get('/api/content', asyncRoute(async (req, res) => {
+  res.json(await loadContent())
+}))
 
 // Админские ручки постов
-app.post('/api/admin/posts', requireAuth, (req, res) => {
+app.post('/api/admin/posts', requireAuth, asyncRoute(async (req, res) => {
   const post = req.body
   if (!validatePost(post)) return res.status(400).json({ error: 'invalid post' })
-  const content = loadContent()
+  const content = await loadContent()
   if (content.posts.some((p) => p.slug === post.slug)) {
     return res.status(409).json({ error: 'slug already exists' })
   }
   content.posts.unshift(post)
-  saveContent(content)
+  await saveContent(content)
   res.status(201).json(post)
-})
+}))
 
-app.put('/api/admin/posts/:slug', requireAuth, (req, res) => {
+app.put('/api/admin/posts/:slug', requireAuth, asyncRoute(async (req, res) => {
   const post = req.body
   if (!validatePost(post)) return res.status(400).json({ error: 'invalid post' })
-  const content = loadContent()
+  const content = await loadContent()
   const idx = content.posts.findIndex((p) => p.slug === req.params.slug)
   if (idx === -1) return res.status(404).json({ error: 'not found' })
   content.posts[idx] = post
-  saveContent(content)
+  await saveContent(content)
   res.json(post)
-})
+}))
 
-app.delete('/api/admin/posts/:slug', requireAuth, (req, res) => {
-  const content = loadContent()
+app.delete('/api/admin/posts/:slug', requireAuth, asyncRoute(async (req, res) => {
+  const content = await loadContent()
   const before = content.posts.length
   content.posts = content.posts.filter((p) => p.slug !== req.params.slug)
   if (content.posts.length === before) {
     return res.status(404).json({ error: 'not found' })
   }
-  saveContent(content)
+  await saveContent(content)
   res.json({ ok: true })
-})
+}))
 
 // Админские ручки ивентов
-app.post('/api/admin/events', requireAuth, (req, res) => {
+app.post('/api/admin/events', requireAuth, asyncRoute(async (req, res) => {
   const event = req.body
   if (!validateEvent(event)) {
     return res.status(400).json({ error: 'invalid event' })
   }
-  const content = loadContent()
+  const content = await loadContent()
   if (content.events.some((e) => e.id === event.id)) {
     return res.status(409).json({ error: 'id already exists' })
   }
   content.events.unshift(event)
-  saveContent(content)
+  await saveContent(content)
   res.status(201).json(event)
-})
+}))
 
-app.put('/api/admin/events/:id', requireAuth, (req, res) => {
+app.put('/api/admin/events/:id', requireAuth, asyncRoute(async (req, res) => {
   const event = req.body
   if (!validateEvent(event)) {
     return res.status(400).json({ error: 'invalid event' })
   }
-  const content = loadContent()
+  const content = await loadContent()
   const idx = content.events.findIndex((e) => e.id === req.params.id)
   if (idx === -1) return res.status(404).json({ error: 'not found' })
   content.events[idx] = event
-  saveContent(content)
+  await saveContent(content)
   res.json(event)
-})
+}))
 
-app.delete('/api/admin/events/:id', requireAuth, (req, res) => {
-  const content = loadContent()
+app.delete('/api/admin/events/:id', requireAuth, asyncRoute(async (req, res) => {
+  const content = await loadContent()
   const before = content.events.length
   content.events = content.events.filter((e) => e.id !== req.params.id)
   if (content.events.length === before) {
     return res.status(404).json({ error: 'not found' })
   }
-  saveContent(content)
+  await saveContent(content)
   res.json({ ok: true })
-})
+}))
 
 // ---------- AI-ассистент ----------
 
@@ -543,6 +601,17 @@ app.post('/api/admin/ai/post', requireAuth, async (req, res) => {
   }
 })
 
+app.use((error, req, res, next) => {
+  console.error('Server error:', error)
+  if (res.headersSent) return next(error)
+  const statusCode = Number.isInteger(error.statusCode)
+    ? error.statusCode
+    : 500
+  res.status(statusCode).json({
+    error: error.publicMessage || 'Internal server error',
+  })
+})
+
 // Статика + SPA fallback
 app.use(express.static(DIST_DIR))
 app.use((req, res, next) => {
@@ -550,6 +619,10 @@ app.use((req, res, next) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'))
 })
 
-app.listen(PORT, () => {
-  console.log(`Surf Landing: http://localhost:${PORT}`)
-})
+export default app
+
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Surf Landing: http://localhost:${PORT}`)
+  })
+}

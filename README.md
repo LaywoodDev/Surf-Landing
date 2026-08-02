@@ -27,6 +27,34 @@ npm start                            # сборка + запуск сервер�
 
 Сервер поднимется на `http://localhost:3000`: раздаёт собранный фронтенд из `dist/`, API контента и авторизацию админки. Контент хранится в `server/data/content.json` (создаётся автоматически из сидов `server/seed.js` при первом запуске; дальше источник правды — сам JSON-файл).
 
+### Деплой на Vercel
+
+Проект содержит `vercel.json` для SPA-маршрутов и Vercel Function в `api/index.js` для серверного API.
+
+Перед production-деплоем:
+
+1. В Vercel откройте **Storage → Create Database → Blob** и создайте **Private** Blob store. Подключённый проект получит `BLOB_STORE_ID`, а функции Vercel будут авторизоваться в Blob через автоматически выдаваемый OIDC-токен. Долгоживущий `BLOB_READ_WRITE_TOKEN` для новых подключений не нужен.
+2. В **Settings → Environment Variables** добавьте:
+   - `ADMIN_PASSWORD_HASH` — SHA-256-хэш нового пароля админки;
+   - `SESSION_SECRET` — длинную случайную строку для подписи сессий;
+   - `PROXYAPI_KEY` — только если нужен AI-ассистент в админке;
+   - `AI_MODEL` — необязательно, по умолчанию используется `gpt-4o`.
+3. Выполните новый deployment после добавления переменных.
+
+Сгенерировать хэш пароля:
+
+```bash
+node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "новый-пароль"
+```
+
+Сгенерировать `SESSION_SECRET`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+На Vercel посты и события хранятся в Private Vercel Blob. При обычном запуске через `npm run server` сохраняется локальное JSON-хранилище.
+
 ## Переменные окружения (`server/.env`)
 
 | Переменная | Описание |
