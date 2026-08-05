@@ -177,7 +177,11 @@ html {
   border: 1px solid var(--border);
   border-radius: 20px;
   overflow-y: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .docs-sidebar-title {
