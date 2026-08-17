@@ -25,6 +25,7 @@ import { BlogPost } from './pages/BlogPost'
 import { Events } from './pages/Events'
 import { Opus } from './pages/Opus'
 import { UserAgreement } from './pages/UserAgreement'
+import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { Contacts } from './pages/Contacts'
 import { AdminGate } from './pages/admin/AdminGate'
 import { Admin } from './pages/admin/Admin'
@@ -95,6 +96,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/opus" element={<Opus />} />
           <Route path="/agreement" element={<UserAgreement />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/docs" element={<Docs />} />
           <Route element={<AdminGate />}>

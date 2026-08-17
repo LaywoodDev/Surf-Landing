@@ -27,6 +27,7 @@ export function Footer() {
       title: t('Terms and policies', 'Условия'),
       links: [
         { label: t('User Agreement', 'Соглашение'), href: '/agreement' },
+        { label: t('Privacy Policy', 'Политика конфиденциальности'), href: '/privacy' },
         { label: t('Contacts', 'Контакты'), href: '/contacts' },
       ],
     },

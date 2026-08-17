@@ -12,8 +12,8 @@ export function Contacts() {
           <h2>{t('Support', 'Поддержка')}</h2>
           <p>
             {t(
-              'For questions about the application, subscriptions and payments:',
-              'По вопросам о приложении, подписках и платежах:'
+              'For questions about the app, Pro subscriptions, Marketplace orders, refunds, and payments:',
+              'По вопросам о приложении, подписках Pro, заказах в Marketplace, возвратах и платежах:'
             )}
           </p>
           <p>
@@ -24,29 +24,32 @@ export function Contacts() {
 
         <section>
           <h2>{t('Company Information', 'Сведения об исполнителе')}</h2>
-          <p>{t('Full company details:', 'Полные реквизиты:')}</p>
+          <p>{t('Provider details:', 'Реквизиты исполнителя:')}</p>
           <p>
-            {t('Kirill Evgenievich Pokochuro', 'Покочуро Кирилл Евгеньевич')}
+            {t('Pokochuro Kirill Evgenyevich', 'Покочуро Кирилл Евгеньевич')}
             <br />
             {t(
-              'Status: self-employed (payer of the Professional Income Tax)',
+              'Status: Self-employed (professional income tax payer)',
               'Статус: самозанятый (плательщик налога на профессиональный доход)'
             )}
             <br />
-            {t('Taxpayer ID (INN): 540139406679', 'ИНН: 540139406679')}
+            {t('TIN (INN): 540139406679', 'ИНН: 540139406679')}
             <br />
             {t(
-              'Registered address: 13/2 Vitaliya Potylitsyna St., Apt. 90, Novosibirsk, Russia',
-              'Адрес регистрации: г. Новосибирск, ул. Виталия Потылицына, д. 13/2, кв. 90'
+              'Registered address: Novosibirsk, 13/2 Vitaliya Potylitsina St., apt. 90, Russia',
+              'Адрес регистрации: г. Новосибирск, ул. Виталия Потылицына, д. 13/2, кв. 90, Россия'
             )}
           </p>
         </section>
 
         <section>
           <h2>{t('Payment Information', 'Платёжная информация')}</h2>
-          <p>{t('Payments are processed via:', 'Платежи обрабатываются через:')}</p>
+          <p>{t('Payments are processed through:', 'Платежи обрабатываются через:')}</p>
           <p>
-            {t('Payment agent: LLC "NCO YooMoney"', 'Платёжный агент: ООО «НКО ЮМани»')}
+            {t(
+              'Payment Agent: NCO YooMoney LLC (ООО «НКО «ЮМани»)',
+              'Платёжный агент: ООО «НКО «ЮМани»'
+            )}
             <br />
             {t('License: No. 3510-K', 'Лицензия: № 3510-К')}
             <br />
@@ -63,7 +66,12 @@ export function Contacts() {
 
         <section>
           <h2>{t('Data Protection', 'Защита данных')}</h2>
-          <p>{t('For questions about personal data processing:', 'По вопросам обработки персональных данных:')}</p>
+          <p>
+            {t(
+              'For questions regarding personal data processing:',
+              'По вопросам обработки персональных данных:'
+            )}
+          </p>
           <p>
             Email:{' '}
             <a href="mailto:surf-messanger@mail.ru">surf-messanger@mail.ru</a>
