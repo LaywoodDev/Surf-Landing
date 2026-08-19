@@ -47,6 +47,7 @@ export function Plans() {
         t('Basic AI Tools', 'Базовые AI-инструменты'),
       ],
       button: t('Use Surf for Free', 'Пользоваться бесплатно'),
+      href: 'https://surf-app.xyz',
       variant: 'free',
     },
     {
@@ -55,10 +56,13 @@ export function Plans() {
       tagline: t('Break down the boundaries', 'Сними все границы'),
       features: [
         t('Opus in Chats', 'Opus в чатах'),
+        t('Opus Calls', 'Звонки с Opus'),
         t('Doubled Limits', 'Двойные лимиты'),
         t('Profile Badge', 'Значок в профиле'),
         t('Advanced AI Tools', 'Продвинутые AI-инструменты'),
+        t('Advanced Web Search', 'Продвинутый веб-поиск'),
         t('Voice mode', 'Голосовой режим'),
+        t('AI Recorder', 'AI Recorder'),
         t('Appearance Customization', 'Кастомизация внешнего вида'),
       ],
       button: t('Upgrade', 'Перейти на Pro'),

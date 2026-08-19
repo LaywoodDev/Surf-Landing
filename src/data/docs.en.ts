@@ -284,7 +284,7 @@ export const docsChaptersEn: DocChapter[] = [
     desktop: ['Open the dedicated Opus chat and describe your request in natural language.', 'Attach an image or document, or use voice input when needed.', 'If Opus requests access, review the permission category and allow only what is required.', 'Review important answers and actions before relying on them.', 'Surf Pro users can mention @opus inside regular chats.'],
     mobile: ['Open the Opus tab in the bottom navigation.', 'Type or dictate a request, or attach a file.', 'Manage individual Opus permissions from its settings.', 'Use @opus in a conversation with Surf Pro.'],
     details: [
-      { title: 'What Opus can do', bullets: ['Answer questions and help with writing, ideas, notes, and plans.', 'Analyze conversation context you have allowed it to read.', 'Work with images and files or search the web when permitted.', 'Create and cancel reminders.', 'Send and schedule messages or change selected settings.', 'Manage contacts and blocks, create groups, and add members when explicitly allowed.'] },
+      { title: 'What Opus can do', bullets: ['Answer questions and help with writing, ideas, notes, and plans.', 'Analyze conversation context you have allowed it to read.', 'Work with images and files or search the web when permitted.', 'Create and cancel reminders.', 'Send and schedule messages or change selected settings.', 'Manage contacts and blocks, create groups, and add members when explicitly allowed.', 'Surf Pro users can ask Opus to call one or more people and deliver a spoken message.'] },
       { title: 'Permissions', bullets: ['Read chats.', 'Search the web.', 'Send and schedule messages.', 'Manage reminders.', 'Change settings.', 'Manage contacts and groups.'] },
       { title: 'Instructions and memory', paragraphs: ['Use custom instructions to describe how you want Opus to work. Memory stores selected useful facts and preferences. Avoid saving unnecessary confidential information.'] },
       { title: 'Reminders', paragraphs: ['Ask Opus to remind you “in 20 minutes” or provide an exact date and time. You can view and cancel active reminders.'] },
@@ -292,6 +292,81 @@ export const docsChaptersEn: DocChapter[] = [
     problems: [
       { issue: 'Opus does not perform an action', solution: 'Check the relevant permission and make the request more specific.' },
       { issue: 'The answer does not use chat context', solution: 'Make sure chat reading is allowed and that the correct conversation is selected.' },
+    ],
+  },
+  {
+    id: 'opus-calls',
+    group: 'features',
+    title: 'Opus calls',
+    summary: 'Surf Pro users can ask Opus to call people, deliver a spoken message, and report whether the call went through.',
+    access: 'Pro',
+    purpose: 'Have Opus reach someone by voice when you cannot call them yourself, then get a short status back in chat.',
+    desktop: [
+      'Open your private Opus chat or mention @opus in a regular conversation.',
+      'Ask Opus to call one or more people and say what to tell them.',
+      'If Opus asks for confirmation, check the recipients and the message, then confirm.',
+      'Choose the assistant voice for calls in settings.',
+      'Wait for a report on whether each call connected.',
+      'If a recipient says something in reply, Opus sends that reply back to you in chat.',
+    ],
+    mobile: [
+      'Open the Opus tab or mention @opus in a chat.',
+      'Ask Opus to call a person or several people and say what to pass on.',
+      'Confirm the request if Opus asks for permission to place the call.',
+      'Choose the assistant voice in settings.',
+      'Wait for a message about whether the call connected.',
+      'If the other person replied on the call, Opus forwards that reply to you in chat.',
+    ],
+    details: [
+      {
+        title: 'What happens on the call',
+        paragraphs: [
+          'Opus calls the person you named, or several people at once, and speaks the message you asked it to deliver. It does not continue the conversation or answer the other person during the call.',
+        ],
+      },
+      {
+        title: 'What Opus reports to you',
+        bullets: [
+          'Whether it managed to reach each recipient.',
+          'If the other person said something in reply, that reply is sent to you in the Opus chat.',
+        ],
+      },
+      {
+        title: 'Calling several people',
+        paragraphs: [
+          'You can ask Opus to call multiple people in one request. Connection status and any replies are handled separately for each call.',
+        ],
+      },
+      {
+        title: 'Assistant voice',
+        paragraphs: [
+          'Choose the voice Opus uses on calls in settings. Available voices:',
+        ],
+        bullets: [
+          'Peter Griffin.',
+          'Anton Chigurh.',
+          'Moriarty.',
+          'Jarvis.',
+          'Vitaly.',
+          'Askhab Tamaev.',
+          'Litvin.',
+          'Zelensky.',
+          'Sweetie Fox.',
+          'UglyFaceKid.',
+          'Homelander.',
+          '5opka.',
+          'MrBeast.',
+        ],
+      },
+    ],
+    limits: [
+      'This feature is available only to Surf Pro users.',
+      'Opus delivers the message and does not hold a live conversation on the call.',
+    ],
+    problems: [
+      { issue: 'Opus did not start the call', solution: 'Check that Surf Pro is active and that the request names someone Opus can identify: a contact or a user from a chat.' },
+      { issue: 'Nobody answered', solution: 'This is expected if the call did not connect. Opus will tell you it could not get through. Try later or send a message instead.' },
+      { issue: 'Opus does not reply to the other person on the call', solution: 'This is intentional. Opus only speaks your message. If the other person said something, that reply comes to you in chat, not during the call.' },
     ],
   },
   {
@@ -351,7 +426,7 @@ export const docsChaptersEn: DocChapter[] = [
     purpose: 'Expand Opus capabilities, appearance options, and chat organization limits.',
     desktop: ['Open Surf Pro.', 'Choose a monthly or annual plan using the current price shown in the product.', 'Complete payment through YooKassa.', 'Return to Surf and check your Pro badge and features.', 'To gift Pro, choose an available gift plan and recipient.'],
     mobile: ['Open Surf Pro from your profile.', 'Choose a plan and complete payment in the payment interface.', 'Return to Surf and check the subscription status.', 'Use available gift plans to purchase Pro for another user.'],
-    details: [{ title: 'Pro features', bullets: ['@opus in regular chats, extended AI tools, voice, and file support.', 'Voice message transcription.', 'Audio call recording, automatic transcription, and AI reports from Opus.', 'Additional themes, fonts, wallpapers, PWA icons, and Interface rounding (0–100 %).', 'Up to 20 folders and 10 pinned chats.', 'Higher limits and a Pro badge.'] }],
+    details: [{ title: 'Pro features', bullets: ['@opus in regular chats, extended AI tools, voice, and file support.', 'Voice message transcription.', 'Audio call recording, automatic transcription, and AI reports from Opus.', 'AI Recorder — the same recording, transcription, and AI reports as Audio call recording, but without a call.', 'Opus Calls: ask Opus to call one or more people and deliver a spoken message. Opus reports whether it got through and any reply, but does not continue the conversation on the call.', 'Additional themes, fonts, wallpapers, PWA icons, and Interface rounding (0–100 %).', 'Up to 20 folders and 10 pinned chats.', 'Higher limits and a Pro badge.'] }],
     problems: [{ issue: 'Payment succeeded but Pro is not active', solution: 'Refresh Surf and check the account. If the status does not change, keep the payment confirmation and contact support.' }],
   },
   {
@@ -364,6 +439,7 @@ export const docsChaptersEn: DocChapter[] = [
       { title: 'Does Surf support video calls?', paragraphs: ['No. Surf supports one-to-one and group audio calls. You can send video as a message or file.'] },
       { title: 'Can Opus read all my chats?', paragraphs: ['Not automatically. Reading chats is a separate permission. When it is disabled, Opus must not analyze your conversations.'] },
       { title: 'Are calls recorded?', paragraphs: ['Not by default. A Surf Pro user can manually start recording from the ••• menu during an active call. The recording, transcript, and report are available only to the user who started it, and only audio after Record is selected is captured.'] },
+      { title: 'Can Opus call people for me?', paragraphs: ['Yes, for Surf Pro users. Ask Opus to call one or more people and say what to tell them. Opus reports whether it got through and forwards any reply the other person said. It does not continue the conversation during the call. The assistant voice is chosen in settings.'] },
       { title: 'Does Surf use end-to-end encryption?', paragraphs: ['No. End-to-end encryption (E2EE) is not used in the app.'] },
       { title: 'Where can I see the current Pro price?', paragraphs: ['Open Surf Pro inside the product to see current monthly and annual plans.'] },
     ],
