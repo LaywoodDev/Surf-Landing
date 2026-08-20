@@ -378,6 +378,119 @@
   }
 }
 
+/* Предпросмотр главы документации (подтверждение перед публикацией) */
+.docs-preview {
+  align-self: stretch;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--bg);
+  animation: ai-msg-in 0.2s ease;
+}
+
+.docs-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.docs-preview-group {
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.docs-preview-lang {
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+
+  h4 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent-blue);
+    margin-bottom: 8px;
+  }
+}
+
+.docs-preview-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+
+.docs-preview-summary {
+  font-size: 15px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+}
+
+.docs-preview-access {
+  display: inline-block;
+  font-size: 12px;
+  color: var(--accent-blue);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+
+.docs-preview-block {
+  margin-top: 10px;
+
+  strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text-heading);
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 155%;
+    margin-bottom: 4px;
+  }
+
+  ol,
+  ul {
+    padding-left: 20px;
+    margin: 4px 0;
+    font-size: 14px;
+    line-height: 155%;
+  }
+
+  details {
+    font-size: 14px;
+    margin-bottom: 4px;
+
+    summary {
+      cursor: pointer;
+      color: var(--text-heading);
+    }
+
+    p {
+      color: var(--text);
+      margin-top: 4px;
+    }
+  }
+}
+
+.docs-preview-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
 .selection-popup {
   display: flex;
   gap: 4px;

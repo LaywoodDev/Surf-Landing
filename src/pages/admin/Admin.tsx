@@ -12,7 +12,7 @@ function handleMutationError(err: unknown) {
 }
 
 export function Admin() {
-  const { posts, events, deletePost, deleteEvent } = useContent()
+  const { posts, events, docs, deletePost, deleteEvent, deleteDocs } = useContent()
 
   const handleDeletePost = async (slug: string, title: string) => {
     if (window.confirm(`Delete post "${title}"?`)) {
@@ -28,6 +28,16 @@ export function Admin() {
     if (window.confirm(`Delete event "${title}"?`)) {
       try {
         await deleteEvent(id)
+      } catch (err) {
+        handleMutationError(err)
+      }
+    }
+  }
+
+  const handleDeleteDoc = async (id: string, title: string) => {
+    if (window.confirm(`Delete documentation chapter "${title}"?`)) {
+      try {
+        await deleteDocs(id)
       } catch (err) {
         handleMutationError(err)
       }
@@ -147,6 +157,51 @@ export function Admin() {
                 </div>
               </li>
             ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="admin-section">
+        <div className="admin-section-header">
+          <h2>Documentation</h2>
+          <Link
+            to="/admin/docs/new"
+            className="admin-button admin-button-primary"
+          >
+            + Add with AI
+          </Link>
+        </div>
+
+        {docs.ru.length === 0 ? (
+          <p className="admin-empty">
+            No additional chapters yet. Use the AI assistant to draft and
+            publish a new section of the /docs page.
+          </p>
+        ) : (
+          <ul className="admin-list">
+            {docs.ru.map((chapter) => {
+              const en = docs.en.find((c) => c.id === chapter.id)
+              return (
+                <li key={chapter.id} className="admin-list-item">
+                  <div className="admin-list-body">
+                    <span className="admin-list-title">{chapter.title}</span>
+                    <span className="admin-list-meta">
+                      {chapter.group} · /docs#{chapter.id}
+                      {en ? ` · EN: ${en.title}` : ''}
+                    </span>
+                  </div>
+                  <div className="admin-list-actions">
+                    <button
+                      type="button"
+                      className="admin-button admin-button-danger"
+                      onClick={() => handleDeleteDoc(chapter.id, chapter.title)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         )}
       </section>

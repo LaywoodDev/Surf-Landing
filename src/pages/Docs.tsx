@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useLang, useT } from '../context/LangContext'
+import { useContent } from '../context/ContentContext'
 import { docsChapters, docsGroups, type DocChapter, type DocGroup } from '../data/docs'
 import { docsChaptersEn } from '../data/docs.en'
 
@@ -88,8 +89,15 @@ export function Docs() {
   const [query, setQuery] = useState('')
   const { lang } = useLang()
   const t = useT()
+  const { docs } = useContent()
   const groupLabels = useGroupLabels()
-  const chapters = lang === 'ru' ? docsChapters : docsChaptersEn
+  const chapters = useMemo(
+    () =>
+      lang === 'ru'
+        ? [...docsChapters, ...docs.ru]
+        : [...docsChaptersEn, ...docs.en],
+    [lang, docs.ru, docs.en]
+  )
   const normalizedQuery = query.trim().toLocaleLowerCase(lang)
 
   const results = useMemo(() => {

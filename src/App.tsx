@@ -41,6 +41,9 @@ const AdminPostForm = lazy(() =>
 const AdminEventForm = lazy(() =>
   import('./pages/admin/AdminEventForm').then((m) => ({ default: m.AdminEventForm }))
 )
+const AdminDocsAssistant = lazy(() =>
+  import('./pages/admin/AdminDocsAssistant').then((m) => ({ default: m.AdminDocsAssistant }))
+)
 
 function App() {
   const location = useLocation()
@@ -105,6 +108,7 @@ function App() {
             <Route path="/admin/blog/:slug/edit" element={<AdminPostForm />} />
             <Route path="/admin/events/new" element={<AdminEventForm />} />
             <Route path="/admin/events/:id/edit" element={<AdminEventForm />} />
+            <Route path="/admin/docs/new" element={<AdminDocsAssistant />} />
           </Route>
         </Routes>
       </Suspense>

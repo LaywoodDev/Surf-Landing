@@ -102,10 +102,63 @@ Rules for the draft:
 - if the request includes "Current form content", treat it as the draft being edited (the admin may have written or changed it manually): refine, format and structure it as asked, and return the full updated draft
 - when the admin asks to refine a previous draft (change the date, time, place, description — anything), return the FULL updated draft (same JSON format)`
 
+const DOC_GROUPS = ['start', 'communication', 'features', 'settings', 'help']
+
+/**
+ * Промпт для дополнения пользовательской документации. Возвращает двуязычную
+ * главу (ru/en) с одним и тем же id и группой. Существующие id передаются
+ * отдельно, чтобы AI не дублировал разделы.
+ */
+function docsSystemPrompt(existingIds) {
+  const ids = existingIds.length
+    ? existingIds.join(', ')
+    : '(none yet)'
+  return `You are the documentation editor for Surf — a privacy-focused messaging app with an AI assistant called Opus. The admin asks you to write or extend a chapter of the public user documentation (help center).
+
+Existing chapter ids (do NOT reuse them): ${ids}
+The documentation has exactly 5 groups: start, communication, features, settings, help.
+
+Return ONLY a JSON object, no markdown fences, no commentary:
+- {"type":"draft","id":"...","group":"...","ru":{...},"en":{...}} — a ready bilingual chapter
+- {"type":"question","question":"..."} — if critical information is missing, ask ONE short clarifying question in Russian instead
+
+Draft rules:
+- id: short lowercase slug using only latin letters, digits and hyphens, unique, must not collide with existing ids
+- group: one of "start", "communication", "features", "settings", "help"
+- ru and en are localized versions with the same meaning and structure. Use ONLY these fields and omit any that are empty:
+  - "title": required, short and clear
+  - "summary": required, one sentence describing what the chapter covers
+  - "access": optional, one of "Free", "Free + Pro", "Pro"
+  - "purpose": optional, one sentence on what the feature is for
+  - "desktop": optional, ordered step-by-step instructions for desktop
+  - "mobile": optional, ordered step-by-step instructions for mobile
+  - "details": optional, array of {"title", "paragraphs": [...], "bullets": [...]} (paragraphs/bullets optional)
+  - "problems": optional, array of {"issue", "solution"}
+- write "ru" in Russian and "en" in English
+- match the tone of the existing docs: concrete, step-by-step, honest, no marketing fluff
+- if the admin asks to modify a chapter you produced earlier, return the FULL updated bilingual chapter (same id)`
+}
+
 // ---------- Хранилище контента ----------
 
 function isValidContent(content) {
   return Array.isArray(content?.posts) && Array.isArray(content?.events)
+}
+
+function emptyDocs() {
+  return { ru: [], en: [] }
+}
+
+function normalizeDocs(docs) {
+  if (!docs || typeof docs !== 'object') return emptyDocs()
+  return {
+    ru: Array.isArray(docs.ru) ? docs.ru : [],
+    en: Array.isArray(docs.en) ? docs.en : [],
+  }
+}
+
+function withDocs(content) {
+  return { ...content, docs: normalizeDocs(content.docs) }
 }
 
 async function loadContent() {
@@ -115,12 +168,14 @@ async function loadContent() {
         access: 'private',
         useCache: false,
       })
-      if (!result) return { posts: seedPosts, events: seedEvents }
+      if (!result) {
+        return { posts: seedPosts, events: seedEvents, docs: emptyDocs() }
+      }
 
       const parsed = await new Response(result.stream).json()
       return isValidContent(parsed)
-        ? parsed
-        : { posts: seedPosts, events: seedEvents }
+        ? withDocs(parsed)
+        : { posts: seedPosts, events: seedEvents, docs: emptyDocs() }
     } catch (error) {
       console.error('Не удалось прочитать контент из Vercel Blob:', error)
       throw error
@@ -128,17 +183,17 @@ async function loadContent() {
   }
 
   if (!fs.existsSync(DATA_FILE)) {
-    const initial = { posts: seedPosts, events: seedEvents }
+    const initial = { posts: seedPosts, events: seedEvents, docs: emptyDocs() }
     await saveContent(initial)
     return initial
   }
   try {
     const parsed = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'))
-    if (isValidContent(parsed)) return parsed
+    if (isValidContent(parsed)) return withDocs(parsed)
   } catch {
     // повреждённый файл — отдаём сиды, файл не трогаем
   }
-  return { posts: seedPosts, events: seedEvents }
+  return { posts: seedPosts, events: seedEvents, docs: emptyDocs() }
 }
 
 async function saveContent(content) {
@@ -297,6 +352,68 @@ function validateEvent(e) {
   )
 }
 
+function isDocSlug(v) {
+  return typeof v === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(v) && v.length <= 100
+}
+
+function isOptionalStringArray(v, maxItem = 1000) {
+  return (
+    v === undefined ||
+    (Array.isArray(v) &&
+      v.length <= 40 &&
+      v.every((s) => isNonEmptyString(s, maxItem)))
+  )
+}
+
+function isOptionalDetails(v) {
+  return (
+    v === undefined ||
+    (Array.isArray(v) &&
+      v.length <= 20 &&
+      v.every((d) => {
+        if (!d || !isNonEmptyString(d.title, 300)) return false
+        if (d.paragraphs !== undefined && !isOptionalStringArray(d.paragraphs, 2000)) {
+          return false
+        }
+        if (d.bullets !== undefined && !isOptionalStringArray(d.bullets, 1000)) {
+          return false
+        }
+        return true
+      }))
+  )
+}
+
+function isOptionalProblems(v) {
+  return (
+    v === undefined ||
+    (Array.isArray(v) &&
+      v.length <= 20 &&
+      v.every(
+        (p) =>
+          p &&
+          isNonEmptyString(p.issue, 500) &&
+          isNonEmptyString(p.solution, 2000)
+      ))
+  )
+}
+
+function validateDocChapter(ch) {
+  if (!ch || typeof ch !== 'object') return false
+  if (!isDocSlug(ch.id)) return false
+  if (!DOC_GROUPS.includes(ch.group)) return false
+  if (!isNonEmptyString(ch.title, 300)) return false
+  if (!isNonEmptyString(ch.summary, 1000)) return false
+  if (ch.access !== undefined && !['Free', 'Free + Pro', 'Pro'].includes(ch.access)) {
+    return false
+  }
+  if (ch.purpose !== undefined && !isNonEmptyString(ch.purpose, 3000)) return false
+  if (!isOptionalStringArray(ch.desktop)) return false
+  if (!isOptionalStringArray(ch.mobile)) return false
+  if (!isOptionalDetails(ch.details)) return false
+  if (!isOptionalProblems(ch.problems)) return false
+  return true
+}
+
 // ---------- Приложение ----------
 
 const app = express()
@@ -415,6 +532,63 @@ app.delete('/api/admin/events/:id', requireAuth, asyncRoute(async (req, res) => 
   const before = content.events.length
   content.events = content.events.filter((e) => e.id !== req.params.id)
   if (content.events.length === before) {
+    return res.status(404).json({ error: 'not found' })
+  }
+  await saveContent(content)
+  res.json({ ok: true })
+}))
+
+// Админские ручки дополнений документации (bilingual: ru + en)
+app.post('/api/admin/docs', requireAuth, asyncRoute(async (req, res) => {
+  const { ru, en } = req.body || {}
+  if (!validateDocChapter(ru) || !validateDocChapter(en)) {
+    return res.status(400).json({ error: 'invalid chapter' })
+  }
+  if (ru.id !== en.id) {
+    return res.status(400).json({ error: 'ru and en ids must match' })
+  }
+
+  const content = await loadContent()
+  if (
+    content.docs.ru.some((c) => c.id === ru.id) ||
+    content.docs.en.some((c) => c.id === en.id)
+  ) {
+    return res.status(409).json({ error: 'id already exists' })
+  }
+
+  content.docs.ru.push(ru)
+  content.docs.en.push(en)
+  await saveContent(content)
+  res.status(201).json({ ru, en })
+}))
+
+app.put('/api/admin/docs/:id', requireAuth, asyncRoute(async (req, res) => {
+  const { ru, en } = req.body || {}
+  if (!validateDocChapter(ru) || !validateDocChapter(en)) {
+    return res.status(400).json({ error: 'invalid chapter' })
+  }
+  if (ru.id !== req.params.id || en.id !== req.params.id) {
+    return res.status(400).json({ error: 'id mismatch' })
+  }
+
+  const content = await loadContent()
+  const ruIdx = content.docs.ru.findIndex((c) => c.id === req.params.id)
+  const enIdx = content.docs.en.findIndex((c) => c.id === req.params.id)
+  if (ruIdx === -1 && enIdx === -1) {
+    return res.status(404).json({ error: 'not found' })
+  }
+  if (ruIdx !== -1) content.docs.ru[ruIdx] = ru
+  if (enIdx !== -1) content.docs.en[enIdx] = en
+  await saveContent(content)
+  res.json({ ru, en })
+}))
+
+app.delete('/api/admin/docs/:id', requireAuth, asyncRoute(async (req, res) => {
+  const content = await loadContent()
+  const before = content.docs.ru.length + content.docs.en.length
+  content.docs.ru = content.docs.ru.filter((c) => c.id !== req.params.id)
+  content.docs.en = content.docs.en.filter((c) => c.id !== req.params.id)
+  if (content.docs.ru.length + content.docs.en.length === before) {
     return res.status(404).json({ error: 'not found' })
   }
   await saveContent(content)
@@ -584,6 +758,106 @@ app.post('/api/admin/ai/post', requireAuth, async (req, res) => {
         },
         raw,
       })
+    }
+    if (parsed.type === 'question' && isNonEmptyString(parsed.question, 2000)) {
+      return res.json({ type: 'question', question: parsed.question, raw })
+    }
+    return res
+      .status(502)
+      .json({ error: 'AI returned an unexpected format. Try again.' })
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      return res.status(504).json({ error: 'AI timed out. Try again.' })
+    }
+    return res.status(502).json({ error: 'AI service is unavailable.' })
+  } finally {
+    clearTimeout(timeout)
+  }
+})
+
+// ---------- AI: дополнение документации ----------
+
+app.post('/api/admin/ai/docs', requireAuth, async (req, res) => {
+  if (!PROXYAPI_KEY) {
+    return res.status(503).json({
+      error: 'AI is not configured: add PROXYAPI_KEY to server/.env',
+    })
+  }
+  if (isAiRateLimited(req.ip || 'unknown')) {
+    return res
+      .status(429)
+      .json({ error: 'Too many AI requests. Try again in a minute.' })
+  }
+
+  const messages = req.body?.messages
+  if (!validateAiMessages(messages)) {
+    return res.status(400).json({ error: 'invalid messages' })
+  }
+
+  const existingIds = req.body?.existingIds
+  if (
+    existingIds !== undefined &&
+    !(
+      Array.isArray(existingIds) &&
+      existingIds.length <= 200 &&
+      existingIds.every((id) => typeof id === 'string' && id.length <= 100)
+    )
+  ) {
+    return res.status(400).json({ error: 'invalid existingIds' })
+  }
+
+  const openAiMessages = [
+    { role: 'system', content: docsSystemPrompt(existingIds ?? []) },
+    ...messages.map((m) => ({
+      role: m.role,
+      content: m.role === 'user' ? toOpenAiContent(m) : m.text,
+    })),
+  ]
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS)
+  try {
+    const aiRes = await fetch(PROXYAPI_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${PROXYAPI_KEY}`,
+      },
+      body: JSON.stringify({
+        model: AI_MODEL,
+        messages: openAiMessages,
+        temperature: 0.7,
+        max_tokens: 4000,
+        response_format: { type: 'json_object' },
+      }),
+      signal: controller.signal,
+    })
+
+    if (!aiRes.ok) {
+      console.error('ProxyAPI error:', aiRes.status, await aiRes.text())
+      return res
+        .status(502)
+        .json({ error: `AI service error (${aiRes.status})` })
+    }
+
+    const data = await aiRes.json()
+    const raw = data.choices?.[0]?.message?.content || ''
+
+    let parsed
+    try {
+      parsed = JSON.parse(raw)
+    } catch {
+      return res
+        .status(502)
+        .json({ error: 'AI returned an unreadable response. Try again.' })
+    }
+
+    if (parsed.type === 'draft' && isDocSlug(parsed.id) && parsed.ru && parsed.en) {
+      const ru = { id: parsed.id, group: parsed.group, ...parsed.ru }
+      const en = { id: parsed.id, group: parsed.group, ...parsed.en }
+      if (validateDocChapter(ru) && validateDocChapter(en)) {
+        return res.json({ type: 'draft', draft: { ru, en }, raw })
+      }
     }
     if (parsed.type === 'question' && isNonEmptyString(parsed.question, 2000)) {
       return res.json({ type: 'question', question: parsed.question, raw })

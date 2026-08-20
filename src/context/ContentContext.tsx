@@ -4,13 +4,25 @@ import { posts as seedPosts } from '../data/posts'
 import type { Post } from '../data/posts'
 import { events as seedEvents } from '../data/events'
 import type { EventItem } from '../data/events'
+import type { DocChapter } from '../data/docs'
 
 /** Сессия истекла или её нет — AdminGate покажет форму входа после reload */
 export class AuthError extends Error {}
 
+export interface DocsState {
+  ru: DocChapter[]
+  en: DocChapter[]
+}
+
+export interface BilingualDoc {
+  ru: DocChapter
+  en: DocChapter
+}
+
 interface ContentState {
   posts: Post[]
   events: EventItem[]
+  docs: DocsState
 }
 
 interface ContentContextValue extends ContentState {
@@ -20,6 +32,9 @@ interface ContentContextValue extends ContentState {
   addEvent: (event: EventItem) => Promise<void>
   updateEvent: (id: string, event: EventItem) => Promise<void>
   deleteEvent: (id: string) => Promise<void>
+  addDocs: (chapter: BilingualDoc) => Promise<void>
+  updateDocs: (id: string, chapter: BilingualDoc) => Promise<void>
+  deleteDocs: (id: string) => Promise<void>
 }
 
 const ContentContext = createContext<ContentContextValue | null>(null)
@@ -43,6 +58,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ContentState>({
     posts: seedPosts,
     events: seedEvents,
+    docs: { ru: [], en: [] },
   })
 
   useEffect(() => {
@@ -50,7 +66,14 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
       .then((data) => {
         if (Array.isArray(data.posts) && Array.isArray(data.events)) {
-          setState({ posts: data.posts, events: data.events })
+          setState({
+            posts: data.posts,
+            events: data.events,
+            docs: {
+              ru: Array.isArray(data.docs?.ru) ? data.docs.ru : [],
+              en: Array.isArray(data.docs?.en) ? data.docs.en : [],
+            },
+          })
         }
       })
       .catch(() => {})
@@ -59,6 +82,7 @@ export function ContentProvider({ children }: { children: ReactNode }) {
   const value: ContentContextValue = {
     posts: state.posts,
     events: state.events,
+    docs: state.docs,
 
     addPost: async (post) => {
       await api('/api/admin/posts', {
@@ -115,6 +139,47 @@ export function ContentProvider({ children }: { children: ReactNode }) {
       setState((s) => ({
         ...s,
         events: s.events.filter((e) => e.id !== id),
+      }))
+    },
+
+    addDocs: async (chapter) => {
+      await api('/api/admin/docs', {
+        method: 'POST',
+        body: JSON.stringify(chapter),
+      })
+      setState((s) => ({
+        ...s,
+        docs: {
+          ru: [...s.docs.ru, chapter.ru],
+          en: [...s.docs.en, chapter.en],
+        },
+      }))
+    },
+
+    updateDocs: async (id, chapter) => {
+      await api(`/api/admin/docs/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        body: JSON.stringify(chapter),
+      })
+      setState((s) => ({
+        ...s,
+        docs: {
+          ru: s.docs.ru.map((c) => (c.id === id ? chapter.ru : c)),
+          en: s.docs.en.map((c) => (c.id === id ? chapter.en : c)),
+        },
+      }))
+    },
+
+    deleteDocs: async (id) => {
+      await api(`/api/admin/docs/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+      })
+      setState((s) => ({
+        ...s,
+        docs: {
+          ru: s.docs.ru.filter((c) => c.id !== id),
+          en: s.docs.en.filter((c) => c.id !== id),
+        },
       }))
     },
   }
