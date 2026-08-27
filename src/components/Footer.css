@@ -119,6 +119,37 @@
   }
 }
 
+.footer-socials {
+  flex: 0 0 auto;
+
+  ul {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  a {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    place-items: center;
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+
+    &:hover {
+      opacity: 0.7;
+      transform: translateY(-2px);
+    }
+  }
+
+  svg {
+    width: 19px;
+    height: 19px;
+    fill: currentColor;
+  }
+}
+
 .footer-lang {
   display: inline-flex;
   border: 1px solid rgb(255 255 255 / 0.25);
