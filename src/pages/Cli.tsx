@@ -48,6 +48,13 @@ export function Cli() {
       ),
     },
     {
+      title: t('Custom Opus agents', 'Custom Opus agents'),
+      text: t(
+        'Create your own agents for routine tasks. They work in chat and reuse your skills.',
+        'Создавайте своих агентов под рутинные задачи. Работают прямо в чате и используют ваши скиллы.'
+      ),
+    },
+    {
       title: t('Login & files', 'Вход и файлы'),
       text: t(
         'Login in one click via browser, plus whoami and logout. surf get <url> downloads attachments.',
