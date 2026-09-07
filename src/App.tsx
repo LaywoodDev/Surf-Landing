@@ -8,6 +8,7 @@ import './components/About.css'
 import './components/Blog.css'
 import './components/Events.css'
 import './components/Opus.css'
+import './components/Cli.css'
 import './components/Legal.css'
 import './components/Docs.css'
 import './components/Admin.css'
@@ -24,6 +25,7 @@ import { Blog } from './pages/Blog'
 import { BlogPost } from './pages/BlogPost'
 import { Events } from './pages/Events'
 import { Opus } from './pages/Opus'
+import { Cli } from './pages/Cli'
 import { UserAgreement } from './pages/UserAgreement'
 import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { Contacts } from './pages/Contacts'
@@ -98,6 +100,7 @@ function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/events" element={<Events />} />
           <Route path="/opus" element={<Opus />} />
+          <Route path="/cli" element={<Cli />} />
           <Route path="/agreement" element={<UserAgreement />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contacts" element={<Contacts />} />

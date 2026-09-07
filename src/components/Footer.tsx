@@ -31,7 +31,10 @@ export function Footer() {
     },
     {
       title: t('Products', 'Продукты'),
-      links: [{ label: 'Opus', href: '/opus' }],
+      links: [
+        { label: 'Opus', href: '/opus' },
+        { label: 'CLI', href: '/cli' },
+      ],
     },
     {
       title: t('Socials', 'Соцсети'),
