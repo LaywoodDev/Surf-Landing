@@ -9,13 +9,15 @@ import './components/Blog.css'
 import './components/Events.css'
 import './components/Opus.css'
 import './components/Cli.css'
+import './components/Download.css'
 import './components/Legal.css'
 import './components/Docs.css'
 import './components/Admin.css'
 import './components/Footer.css'
 
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useRef } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
+import { useLang } from './context/LangContext'
 
 import { Header } from './components/Header'
 import { Footer } from './components/Footer'
@@ -26,6 +28,7 @@ import { BlogPost } from './pages/BlogPost'
 import { Events } from './pages/Events'
 import { Opus } from './pages/Opus'
 import { Cli } from './pages/Cli'
+import { Download } from './pages/Download'
 import { UserAgreement } from './pages/UserAgreement'
 import { PrivacyPolicy } from './pages/PrivacyPolicy'
 import { Contacts } from './pages/Contacts'
@@ -49,6 +52,11 @@ const AdminDocsAssistant = lazy(() =>
 
 function App() {
   const location = useLocation()
+  const { lang } = useLang()
+  // Элементы, уже показанные через reveal, должны оставаться видимыми
+  // после ре-рендера (например, смены языка, которая сносит
+  // вручную добавленный класс `is-visible`).
+  const revealedRef = useRef<WeakSet<Element>>(new WeakSet())
 
   useEffect(() => {
     if (location.hash) {
@@ -65,10 +73,13 @@ function App() {
   }, [location.pathname, location.hash])
 
   useEffect(() => {
-    const elements = document.querySelectorAll('[data-reveal]')
+    const elements = Array.from(document.querySelectorAll('[data-reveal]'))
 
     if (!('IntersectionObserver' in window)) {
-      elements.forEach((el) => el.classList.add('is-visible'))
+      elements.forEach((el) => {
+        el.classList.add('is-visible')
+        revealedRef.current.add(el)
+      })
       return
     }
 
@@ -77,6 +88,7 @@ function App() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible')
+            revealedRef.current.add(entry.target)
             observer.unobserve(entry.target)
           }
         })
@@ -84,10 +96,25 @@ function App() {
       { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     )
 
-    elements.forEach((el) => observer.observe(el))
+    elements.forEach((el) => {
+      // Уже показан ранее — сразу возвращаем класс, снесённый ре-рендером
+      if (revealedRef.current.has(el)) {
+        el.classList.add('is-visible')
+        return
+      }
+      // Элемент уже во вьюпорте (типично для смены языка в подвале) —
+      // показываем синхронно, без ожидания колбэка observer
+      const rect = el.getBoundingClientRect()
+      if (rect.top < window.innerHeight - 40 && rect.bottom > 0) {
+        el.classList.add('is-visible')
+        revealedRef.current.add(el)
+        return
+      }
+      observer.observe(el)
+    })
 
     return () => observer.disconnect()
-  }, [location.pathname])
+  }, [location.pathname, lang])
 
   return (
     <>
@@ -101,6 +128,7 @@ function App() {
           <Route path="/events" element={<Events />} />
           <Route path="/opus" element={<Opus />} />
           <Route path="/cli" element={<Cli />} />
+          <Route path="/download" element={<Download />} />
           <Route path="/agreement" element={<UserAgreement />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/contacts" element={<Contacts />} />

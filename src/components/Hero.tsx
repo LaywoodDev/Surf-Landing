@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useLang, useT } from '../context/LangContext'
 
 export function Hero() {
@@ -54,9 +55,9 @@ export function Hero() {
       </p>
 
       <div className="hero-cta">
-        <a href="https://surf-app.xyz" className="hero-button">
+        <Link to="/download" className="hero-button">
           {t('Get Started', 'Начать')}
-        </a>
+        </Link>
 
         <div className="hero-avatars">
           <div className="avatar" aria-hidden="true">

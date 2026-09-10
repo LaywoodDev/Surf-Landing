@@ -36,20 +36,10 @@ export function Plans() {
   const [activePlan, setActivePlan] = useState(0)
   const t = useT()
 
+  const featuresUrl = 'https://surf-app.xyz/plans/features'
+  const viewAllLabel = t('View all benefits', 'Посмотреть все преимущества')
+
   const plans: Plan[] = [
-    {
-      name: 'Free',
-      price: '0',
-      tagline: t('Use the basic features', 'Базовые возможности'),
-      features: [
-        t('Conversations', 'Переписки'),
-        t('Privacy Customization', 'Настройки приватности'),
-        t('Basic AI Tools', 'Базовые AI-инструменты'),
-      ],
-      button: t('Use Surf for Free', 'Пользоваться бесплатно'),
-      href: 'https://surf-app.xyz',
-      variant: 'free',
-    },
     {
       name: 'Pro',
       price: '349',
@@ -141,6 +131,28 @@ export function Plans() {
                 </li>
               ))}
             </ul>
+
+            <a
+              href={featuresUrl}
+              className="plan-toggle"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{viewAllLabel}</span>
+              <svg
+                className="plan-toggle-chevron"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </a>
 
             {plan.href ? (
               <a href={plan.href} className="plan-button">
