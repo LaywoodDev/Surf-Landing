@@ -1,8 +1,77 @@
-import type { CSSProperties } from 'react'
+import { useState, useRef, useEffect, type CSSProperties } from 'react'
 import { useT } from '../context/LangContext'
+import { IconCheck, IconCopy } from '../components/icons'
 
 export function Cli() {
   const t = useT()
+  const [copied, setCopied] = useState(false)
+  const timerRef = useRef<number | null>(null)
+  const featuresRef = useRef<HTMLElement>(null)
+
+  const installCmd = 'npm install -g cli-surf'
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    const equalize = () => {
+      if (!featuresRef.current) return
+      const cards = featuresRef.current.querySelectorAll<HTMLElement>('.cli-card')
+      if (!cards.length) return
+
+      cards.forEach((c) => {
+        c.style.minHeight = ''
+      })
+
+      let max = 0
+      cards.forEach((c) => {
+        if (c.offsetHeight > max) max = c.offsetHeight
+      })
+
+      if (max > 0) {
+        cards.forEach((c) => {
+          c.style.minHeight = `${max}px`
+        })
+      }
+    }
+
+    equalize()
+    window.addEventListener('resize', equalize)
+    if ('fonts' in document) {
+      document.fonts.ready.then(equalize)
+    }
+
+    return () => {
+      window.removeEventListener('resize', equalize)
+    }
+  }, [t])
+
+  const handleCopy = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(installCmd)
+      } else {
+        const textArea = document.createElement('textarea')
+        textArea.value = installCmd
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+      }
+      setCopied(true)
+      if (timerRef.current) clearTimeout(timerRef.current)
+      timerRef.current = window.setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // ignore
+    }
+  }
 
   const quickStart = [
     { cmd: 'npm install -g cli-surf', desc: t('Needs Node.js 22+. Adds surf and opus commands.', 'Нужен Node.js 22+. Появятся команды surf и opus.') },
@@ -97,9 +166,24 @@ export function Cli() {
             <span />
             <span />
           </div>
-          <pre>
-            <code>npm install -g cli-surf</code>
-          </pre>
+          <div className="cli-terminal-body">
+            <pre>
+              <code>{installCmd}</code>
+            </pre>
+            <button
+              type="button"
+              className={`cli-copy-btn ${copied ? 'is-copied' : ''}`}
+              onClick={handleCopy}
+              aria-label={copied ? t('Copied', 'Скопировано') : t('Copy command', 'Скопировать команду')}
+              title={copied ? t('Copied!', 'Скопировано!') : t('Copy command', 'Скопировать команду')}
+            >
+              {copied ? (
+                <IconCheck width="16" height="16" />
+              ) : (
+                <IconCopy width="16" height="16" />
+              )}
+            </button>
+          </div>
         </div>
       </section>
 
@@ -122,7 +206,11 @@ export function Cli() {
         </div>
       </section>
 
-      <section className="cli-features" aria-label={t('What CLI can do', 'Что умеет CLI')}>
+      <section
+        ref={featuresRef}
+        className="cli-features"
+        aria-label={t('What CLI can do', 'Что умеет CLI')}
+      >
         {features.map((feature, index) => (
           <article
             key={feature.title}
