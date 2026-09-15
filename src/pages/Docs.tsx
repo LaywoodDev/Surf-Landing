@@ -67,6 +67,9 @@ function Chapter({ chapter }: { chapter: DocChapter }) {
               {detail.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
             </ul>
           )}
+          {detail.code && (
+            <pre><code>{detail.code}</code></pre>
+          )}
         </div>
       ))}
 

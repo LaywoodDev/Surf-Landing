@@ -425,6 +425,21 @@ html {
       color: var(--accent-blue);
     }
   }
+
+  pre {
+    max-width: 100%;
+    margin: 16px 0 0;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text-heading);
+    background: var(--gray-bg);
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 160%;
+    white-space: pre;
+  }
 }
 
 .docs-troubles {

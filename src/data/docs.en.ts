@@ -18,10 +18,12 @@ export const docsChaptersEn: DocChapter[] = [
         title: 'Core features',
         bullets: [
           'Private and group chats with real-time message delivery.',
+          'Public and private channels with subscribers, comments, and analytics.',
           'Voice and video messages, photos, documents, and other attachments.',
           'One-to-one and group audio calls.',
           'Folders, pinned chats, search, polls, and scheduled messages.',
           'Opus for text, files, reminders, and actions you explicitly allow.',
+          'Native bots through @BotFather and the Surf Bot API.',
           'A responsive mobile interface and installable PWA.',
         ],
       },
@@ -186,6 +188,34 @@ export const docsChaptersEn: DocChapter[] = [
     problems: [{ issue: 'An action is unavailable', solution: 'Check your role and permissions. Ask the owner or an administrator with the required access to make the change.' }],
   },
   {
+    id: 'channels',
+    group: 'communication',
+    title: 'Channels and posts',
+    summary: 'Public and private channels for publishing, subscriptions, comments, and analytics.',
+    access: 'Free + Pro',
+    purpose: 'Run a one-way feed for an audience or create a private space that is available through an invite link.',
+    desktop: [
+      'Open chat creation and choose “Channel”.',
+      'Enter a name, description, and optionally upload an avatar.',
+      'Choose a public channel with a username or a private channel that requires an invite link.',
+      'Publish text, images, video, audio, documents, and polls as the channel.',
+      'Open channel settings to manage comments, post signatures, and the invite link.',
+    ],
+    mobile: [
+      'Choose “Channel” on the chat creation screen.',
+      'Enter a name and description, then choose public or private access.',
+      'Publish content from the channel composer.',
+      'Open the channel header to manage subscribers, comments, and settings.',
+    ],
+    details: [
+      { title: 'Public and private channels', paragraphs: ['A public channel appears in username search, and anyone can open its profile and subscribe. A private channel is not listed publicly; people join through a valid invite link.'] },
+      { title: 'Comments', bullets: ['Allow comments for every subscriber.', 'Limit comments to administrators.', 'Turn comments off completely.', 'Comments support replies and attachments.'] },
+      { title: 'Channel management', bullets: ['The owner and administrators publish and moderate messages.', 'Post signatures can show the author’s name.', 'Analytics cover subscribers, posts, media, and comments.', 'Content copying and downloading can be disabled.'] },
+    ],
+    limits: ['A public channel needs a unique username.', 'Subscribers cannot see the full subscriber list.', 'Detailed analytics are available with Surf Pro.', 'Invite links expire after a limited period.'],
+    problems: [{ issue: 'A channel does not appear in search', solution: 'Check that it is public and that its username was saved correctly. Private channels are not listed in public search.' }],
+  },
+  {
     id: 'polls',
     group: 'communication',
     title: 'Polls',
@@ -232,6 +262,33 @@ export const docsChaptersEn: DocChapter[] = [
       { issue: 'The report does not appear immediately', solution: 'Allow Opus time to assemble the final audio file and generate the report. If the connection was interrupted during the call, processing continues after the locally saved chunks are uploaded.' },
       { issue: 'Participant names are missing from the transcript', solution: 'Opus shows a name only when it can match speech with sufficient confidence. Neutral speaker labels are expected in other cases.' },
     ],
+  },
+  {
+    id: 'ai-recorder',
+    group: 'features',
+    title: 'AI Recorder',
+    summary: 'Record a conversation outside a call and receive a transcript, summary, and Opus follow-up chat.',
+    access: 'Pro',
+    purpose: 'Capture a meeting or conversation outside Surf and get a structured result in your Opus chat.',
+    desktop: [
+      'Open AI Recorder from the Opus interface.',
+      'Allow microphone access and select Record.',
+      'Stop recording when the conversation ends.',
+      'Wait for the audio upload, transcript, and report.',
+      'Ask Opus questions about the recording in regular messages.',
+    ],
+    mobile: [
+      'Open the Opus tab and choose AI Recorder.',
+      'Allow microphone access, start recording, and stop when finished.',
+      'Open the completed recording card in your Opus chat.',
+      'Ask questions about the transcript and report.',
+    ],
+    details: [
+      { title: 'What the recording produces', bullets: ['An audio file with playback and seeking.', 'A speech transcript.', 'A summary and the main topics.', 'Decisions, tasks, owners, and deadlines when mentioned.', 'Open questions.', 'A conversation with Opus about the recording.'] },
+      { title: 'Storage and privacy', paragraphs: ['The recording, audio, transcript, and report are available only to the user who started the recording. Make sure you have the required participant consent and legal permission before recording.'] },
+    ],
+    limits: ['This feature is available with Surf Pro.', 'Recording requires browser microphone permission.', 'Transcript accuracy depends on audio quality and background noise.'],
+    problems: [{ issue: 'Recording does not start', solution: 'Check microphone permission, the selected input device, and that Surf Pro is active.' }],
   },
   {
     id: 'folders',
@@ -292,6 +349,233 @@ export const docsChaptersEn: DocChapter[] = [
     problems: [
       { issue: 'Opus does not perform an action', solution: 'Check the relevant permission and make the request more specific.' },
       { issue: 'The answer does not use chat context', solution: 'Make sure chat reading is allowed and that the correct conversation is selected.' },
+    ],
+  },
+  {
+    id: 'bots',
+    group: 'features',
+    title: 'Bots and the Surf Bot API',
+    summary: 'Create, configure, and programmatically control bots inside Surf.',
+    access: 'Free',
+    purpose: 'Connect your own service to Surf and automate replies, commands, notifications, and workflows.',
+    desktop: [
+      'Search for the official @BotFather and open a private chat.',
+      'Send /newbot, enter a display name, then a unique username ending in bot.',
+      'Store the returned token securely: BotFather shows it only once.',
+      'Open /mybots and select a bot to change its name, username, description, commands, avatar, webhook, or token.',
+      'Add the bot to a group from its profile or the member menu. Only the group owner or an administrator can do this.',
+    ],
+    mobile: [
+      'Find @BotFather in Surf search and open the private chat.',
+      'Use /newbot and send the name and username step by step.',
+      'Open /mybots and choose a bot with a button for the remaining settings.',
+      'Tap “Start” on your bot profile to open its private chat.',
+    ],
+    details: [
+      { title: 'What developers can do', bullets: ['Manage a bot profile with a name, username, description, commands, and avatar.', 'Use private chats and groups where the bot is installed.', 'Send text, media up to 20 MB, replies, and inline buttons.', 'Edit and delete the bot’s own messages.', 'Show typing, upload_photo, record_video, and upload_document activity states.', 'Receive events through Telegram-style long polling without a public server.'] },
+      { title: 'Surf Bot API', paragraphs: ['Base URL: https://surf-app.xyz/api/bot/v1. Every request uses Authorization: Bearer <bot-token>. Available methods include /me, /get-chat, /get-updates, /send-message, /send-media, /edit-message, /delete-message, /send-chat-action, /webhook-info, and /answer-callback. Successful responses contain ok: true; errors are returned as JSON with an error field and an HTTP status.'] },
+      { title: 'Which languages can I use?', paragraphs: ['The API is not tied to a specific SDK: it uses ordinary HTTPS requests with JSON and multipart/form-data. Any language with an HTTP client and JSON parser works: JavaScript/TypeScript, Python, Go, PHP, Java/Kotlin, C#, Rust, Ruby, Swift, and more. Use curl for a quick manual API check.'], bullets: ['Node.js/TypeScript — native fetch and straightforward async handlers.', 'Python — requests or httpx, useful for integrations and automation.', 'Go — standard net/http, convenient for a long-running polling service.', 'PHP, Java/Kotlin, C#, Rust, Ruby, and Swift — the same endpoints, Bearer token, and JSON schemas.', 'curl — test authentication, chat access, and message sending without creating a project.'] },
+      {
+        title: 'Quick start: Python',
+        paragraphs: ['This example uses httpx: install it with pip install httpx. In production, persist offset in a file or database instead of keeping it only in process memory.'],
+        code: `import os
+import httpx
+
+BASE = 'https://surf-app.xyz/api/bot/v1'
+HEADERS = {'Authorization': 'Bearer ' + os.environ['SURF_BOT_TOKEN']}
+offset = 0
+
+with httpx.Client(timeout=35) as client:
+    while True:
+        response = client.get(
+            BASE + '/get-updates',
+            params={'offset': offset, 'timeout': 30},
+            headers=HEADERS,
+        )
+        body = response.json()
+        if not body['ok']:
+            raise RuntimeError(body['error'])
+
+        for update in body['result']:
+            offset = update['updateId'] + 1
+            if update['type'] != 'message':
+                continue
+            text = update['message']['text']
+            client.post(
+                BASE + '/send-message',
+                headers=HEADERS,
+                json={'chatId': update['chat']['id'], 'text': 'Received: ' + text},
+            )`,
+      },
+      {
+        title: 'Quick request: Go',
+        paragraphs: ['Go only needs the standard net/http, encoding/json, and bytes packages. This example sends a message without an additional SDK.'],
+        code: `package main
+
+import (
+  "bytes"
+  "encoding/json"
+  "net/http"
+  "os"
+)
+
+func main() {
+  payload, _ := json.Marshal(map[string]any{
+    "chatId": 123,
+    "text": "Hello from Go",
+  })
+  request, _ := http.NewRequest(
+    "POST",
+    "https://surf-app.xyz/api/bot/v1/send-message",
+    bytes.NewReader(payload),
+  )
+  request.Header.Set("Authorization", "Bearer "+os.Getenv("SURF_BOT_TOKEN"))
+  request.Header.Set("Content-Type", "application/json")
+  response, err := http.DefaultClient.Do(request)
+  if err != nil { panic(err) }
+  defer response.Body.Close()
+}`,
+      },
+      {
+        title: 'Quick API check with curl',
+        paragraphs: ['Replace the token and chatId with real values. This is useful for testing access before writing a complete bot.'],
+        code: `curl https://surf-app.xyz/api/bot/v1/me \
+  -H "Authorization: Bearer <bot-token>"
+
+curl -X POST https://surf-app.xyz/api/bot/v1/send-message \
+  -H "Authorization: Bearer <bot-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"chatId":123,"text":"Hello from curl"}'`,
+      },
+      { title: 'Choosing a delivery method', bullets: ['For local development and most small services, use get-updates: no domain, TLS certificate, or public endpoint is needed.', 'For production with multiple service instances, use a webhook or one coordinated polling consumer.', 'Do not run independent polling loops with one offset and no shared lock: they can compete for the same queue.', 'After processing an event, advance offset to updateId + 1. If processing fails, keep the offset and retry the event.'] },
+      { title: 'Production checklist', bullets: ['Keep SURF_BOT_TOKEN only in environment variables or a secret manager.', 'Check both the HTTP status and the ok field in every response.', 'Use exponential backoff for network errors and respect rate limits.', 'Make update handling idempotent: an event can be delivered more than once.', 'Never put tokens or personal data in callbackData.', 'Limit bot actions to the permissions it needs and log only safe identifiers.'] },
+      {
+        title: 'Quick start: Node.js and long polling',
+        paragraphs: ['Long polling is the primary development method: your bot server does not need a public address. Persist offset after processing each update so a restart does not process the same event again.'],
+        code: `const base = 'https://surf-app.xyz/api/bot/v1'
+const token = process.env.SURF_BOT_TOKEN
+const headers = { Authorization: 'Bearer ' + token }
+let offset = 0
+
+while (true) {
+  const response = await fetch(
+    base + '/get-updates?offset=' + offset + '&timeout=30',
+    { headers },
+  )
+  const body = await response.json()
+  if (!body.ok) throw new Error(body.error)
+
+  for (const update of body.result) {
+    offset = update.updateId + 1
+    if (update.type !== 'message') continue
+
+    const command = update.command?.name
+    const text = command === 'start'
+      ? 'Bot started.'
+      : 'Received: ' + update.message.text
+
+    await fetch(base + '/send-message', {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chatId: update.chat.id,
+        text,
+        replyToMessageId: update.message.id,
+      }),
+    })
+  }
+}`,
+      },
+      {
+        title: 'Messages, replies, and inline buttons',
+        paragraphs: ['Buttons do not open URLs: when a user presses one, Surf creates a callback_query update. Treat callbackData as your internal command and never put secrets in it.'],
+        code: `await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'Choose an action:',
+    replyToMessageId: update.message.id,
+    replyMarkup: {
+      buttons: [[
+        { text: 'Done', callbackData: 'task:done:123' },
+        { text: 'Snooze', callbackData: 'task:snooze:123' },
+      ]],
+    },
+  }),
+})
+
+if (update.type === 'callback_query') {
+  const data = update.callbackQuery.data
+  if (data === 'task:done:123') {
+    await fetch(base + '/answer-callback', {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ callbackQueryId: update.callbackQuery.id }),
+    })
+  }
+}`,
+      },
+      {
+        title: 'Media, editing, and deletion',
+        paragraphs: ['Use multipart/form-data for a file. A bot can edit or delete only messages sent by that bot. Passing replyMarkup with buttons: [] removes the keyboard from a message.'],
+        code: `const form = new FormData()
+form.append('file', new Blob(['report'], { type: 'text/plain' }), 'report.txt')
+form.append('chatId', String(update.chat.id))
+form.append('caption', 'Report is ready')
+
+await fetch(base + '/send-media', {
+  method: 'POST',
+  headers,
+  body: form,
+})
+
+await fetch(base + '/edit-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    messageId: sentMessageId,
+    text: 'Updated text',
+    replyMarkup: { buttons: [] },
+  }),
+})
+
+await fetch(base + '/delete-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: update.chat.id, messageId: sentMessageId }),
+})`,
+      },
+      {
+        title: 'Webhooks: when to use one',
+        paragraphs: ['Webhooks are optional. Use one instead of long polling only when you have an HTTPS server. Surf sends X-Surf-Bot-Id, X-Surf-Update-Id, and an HMAC signature in X-Surf-Signature. Verify the signature against the untouched request bytes before JSON.parse.'],
+        code: `import crypto from 'node:crypto'
+
+function validSignature(rawBody, signature, secret) {
+  const expected = crypto
+    .createHmac('sha256', secret)
+    .update(rawBody)
+    .digest('hex')
+  return crypto.timingSafeEqual(
+    Buffer.from(expected),
+    Buffer.from(signature),
+  )
+}
+
+// Return HTTP 2xx after successful processing.
+// Store updateId: Surf may retry an event after an error.
+`,
+      },
+      { title: 'Commands and BotFather', paragraphs: ['Register command hints with /setcommands, one line at a time in the format command - description. Use /mybots and its buttons for management without typing usernames. The /setname, /setusername, /setdescription, /setuserpic, /setwebhook, /getwebhookinfo, /revoke, and /deletebot commands also support a bot picker menu.'] },
+      { title: 'Events and privacy mode', bullets: ['In a private chat, the bot receives messages after the conversation starts.', 'In a group, the bot receives commands and explicit @username mentions.', 'Messages from other bots are not delivered to the bot.', 'Inline button presses arrive as callback_query events with callbackData.', 'Webhooks are optional; they require HTTPS and sign events with HMAC-SHA256.'] },
+      { title: 'Token safety', paragraphs: ['Never publish a token in a repository, logs, or client-side code. Surf stores only its hash. If a token is exposed, use /revoke: the old token stops working immediately and the replacement is shown once.'] },
+    ],
+    limits: ['Message text is limited to 4096 characters.', 'One file is limited to 20 MB.', 'Inline keyboards support up to 3 rows and 3 buttons per row.', 'A bot cannot write to a chat where it is not installed.', 'Sending is rate-limited per bot and per chat.'],
+    problems: [
+      { issue: 'The bot does not receive a group message', solution: 'Check that the bot is installed in the group and that the message contains a command or an explicit @username mention.' },
+      { issue: 'The token stopped working', solution: 'Check whether it was revoked with /revoke and use only the latest token issued by BotFather.' },
+      { issue: 'Should I use a webhook?', solution: 'For most projects, use /get-updates. A webhook is useful only when you prefer to receive HTTPS requests from Surf on your own server.' },
     ],
   },
   {
@@ -370,6 +654,61 @@ export const docsChaptersEn: DocChapter[] = [
     ],
   },
   {
+    id: 'opus-integrations',
+    group: 'features',
+    title: 'Opus integrations',
+    summary: 'Connect external services and perform approved actions through Opus with separate permissions.',
+    access: 'Free + Pro',
+    purpose: 'Connect Opus to work tools so you can read data or perform approved actions from a Surf chat.',
+    desktop: [
+      'Open Opus settings and the integrations section.',
+      'Choose a service and complete its authorization in a separate window.',
+      'Review the permissions requested by the service and allow only what you need.',
+      'After connecting, ask Opus to find data or perform an approved action.',
+      'Disconnect the integration from settings when you no longer need it.',
+    ],
+    mobile: [
+      'Open Opus settings from your profile tab.',
+      'Choose an integration and complete authorization.',
+      'Review permissions and manage the connection from the same screen.',
+      'Use the connected service through a regular Opus request.',
+    ],
+    details: [
+      { title: 'Supported services', bullets: ['Google Calendar — view and manage events.', 'Google Drive and Google Sheets — search, read, and perform approved file or spreadsheet operations.', 'GitHub and GitLab — repositories, issues, pull/merge requests, and workspace actions.', 'Notion — search, read, and work with pages.', 'Linear — teams, projects, issues, and states.', 'Todoist — projects and tasks.', 'Airtable and 101 — access data from the connected account.'] },
+      { title: 'Access control', paragraphs: ['Connecting a service does not give Opus unrestricted permission to perform every action. Opus permissions and separate write controls must allow the requested operation. OAuth tokens are stored securely on the server and can be revoked by disconnecting the integration.'] },
+    ],
+    limits: ['Available operations depend on the external service API and your account permissions.', 'Some write operations require separate confirmation or an enabled permission.', 'Expired authorizations must be connected again.'],
+    problems: [{ issue: 'Opus cannot see a connected service', solution: 'Check the integration status, authorization expiry, and the Opus permission for reading the requested data.' }],
+  },
+  {
+    id: 'marketplace',
+    group: 'features',
+    title: 'Marketplace',
+    summary: 'A storefront for digital products and subscriptions with payments, orders, reviews, and seller chats.',
+    access: 'Free',
+    purpose: 'Buy digital products inside Surf and receive the result through a protected order chat.',
+    desktop: [
+      'Open Marketplace in Surf and find a product by search or category.',
+      'Review its description, price, availability, and reviews.',
+      'Choose a payment method and complete checkout.',
+      'Open “My orders” to see the order status and receive the seller’s link or text.',
+      'Use the order chat to contact the seller and leave a review after purchase.',
+    ],
+    mobile: [
+      'Open Marketplace from the Surf menu.',
+      'Search products by name or category.',
+      'Open a product card, review its terms, and pay for the order.',
+      'Track the order and message the seller in its order chat.',
+    ],
+    details: [
+      { title: 'What can be sold', bullets: ['Digital services and subscriptions.', 'A link or text result delivered to the buyer after payment.', 'Products with limited or unlimited stock.'] },
+      { title: 'Orders and gifts', paragraphs: ['Paid orders appear in your purchases. A digital result is delivered once in the order card. You can send a product as a gift to another user when the recipient’s settings allow it.'] },
+      { title: 'Payment safety', paragraphs: ['The payment provider processes checkout while Surf receives the order status. Never send a password, recovery code, or bank-card details to a seller in chat.'] },
+    ],
+    limits: ['The digital product content is defined by the seller.', 'Reviews are available after purchase.', 'Refunds and disputes are handled by Surf support and the payment provider according to the applicable terms.'],
+    problems: [{ issue: 'Payment succeeded but the result is missing', solution: 'Open the order and refresh its status. If the result is still unavailable, message the seller in the order chat or contact support.' }],
+  },
+  {
     id: 'notifications',
     group: 'settings',
     title: 'Notifications',
@@ -440,6 +779,7 @@ export const docsChaptersEn: DocChapter[] = [
       { title: 'Can Opus read all my chats?', paragraphs: ['Not automatically. Reading chats is a separate permission. When it is disabled, Opus must not analyze your conversations.'] },
       { title: 'Are calls recorded?', paragraphs: ['Not by default. A Surf Pro user can manually start recording from the ••• menu during an active call. The recording, transcript, and report are available only to the user who started it, and only audio after Record is selected is captured.'] },
       { title: 'Can Opus call people for me?', paragraphs: ['Yes, for Surf Pro users. Ask Opus to call one or more people and say what to tell them. Opus reports whether it got through and forwards any reply the other person said. It does not continue the conversation during the call. The assistant voice is chosen in settings.'] },
+      { title: 'How do I create a bot?', paragraphs: ['Open @BotFather, send /newbot, and provide a name followed by a username ending in bot. The token is shown once. For development, use /get-updates without a webhook and send replies through the Surf Bot API.'] },
       { title: 'Does Surf use end-to-end encryption?', paragraphs: ['No. End-to-end encryption (E2EE) is not used in the app.'] },
       { title: 'Where can I see the current Pro price?', paragraphs: ['Open Surf Pro inside the product to see current monthly and annual plans.'] },
     ],
