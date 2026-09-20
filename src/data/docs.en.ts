@@ -23,7 +23,7 @@ export const docsChaptersEn: DocChapter[] = [
           'One-to-one and group audio calls.',
           'Folders, pinned chats, search, polls, and scheduled messages.',
           'Opus for text, files, reminders, and actions you explicitly allow.',
-          'Native bots through @BotFather and the Surf Bot API.',
+          'Native bots through Studio (@BotStudio) and the Surf Bot API.',
           'A responsive mobile interface and installable PWA.',
         ],
       },
@@ -359,22 +359,62 @@ export const docsChaptersEn: DocChapter[] = [
     access: 'Free',
     purpose: 'Connect your own service to Surf and automate replies, commands, notifications, and workflows.',
     desktop: [
-      'Search for the official @BotFather and open a private chat.',
+      'Search for official Studio (@BotStudio) and open a private chat.',
       'Send /newbot, enter a display name, then a unique username ending in bot.',
-      'Store the returned token securely: BotFather shows it only once.',
+      'Store the returned token securely: Studio shows it only once.',
       'Open /mybots and select a bot to change its name, username, description, commands, avatar, webhook, or token.',
-      'Add the bot to a group from its profile or the member menu. Only the group owner or an administrator can do this.',
+      'Add your bot to a group from its profile or the member menu. Only the group owner or an administrator can do this, and only when the bot owner has allowed invitations in Studio. Studio itself cannot be added to groups.',
     ],
     mobile: [
-      'Find @BotFather in Surf search and open the private chat.',
+      'Find Studio (@BotStudio) in Surf search and open the private chat.',
       'Use /newbot and send the name and username step by step.',
       'Open /mybots and choose a bot with a button for the remaining settings.',
       'Tap “Start” on your bot profile to open its private chat.',
     ],
     details: [
-      { title: 'What developers can do', bullets: ['Manage a bot profile with a name, username, description, commands, and avatar.', 'Use private chats and groups where the bot is installed.', 'Send text, media up to 20 MB, replies, and inline buttons.', 'Edit and delete the bot’s own messages.', 'Show typing, upload_photo, record_video, and upload_document activity states.', 'Receive events through Telegram-style long polling without a public server.'] },
-      { title: 'Surf Bot API', paragraphs: ['Base URL: https://surf-app.xyz/api/bot/v1. Every request uses Authorization: Bearer <bot-token>. Available methods include /me, /get-chat, /get-updates, /send-message, /send-media, /edit-message, /delete-message, /send-chat-action, /webhook-info, and /answer-callback. Successful responses contain ok: true; errors are returned as JSON with an error field and an HTTP status.'] },
-      { title: 'Which languages can I use?', paragraphs: ['The API is not tied to a specific SDK: it uses ordinary HTTPS requests with JSON and multipart/form-data. Any language with an HTTP client and JSON parser works: JavaScript/TypeScript, Python, Go, PHP, Java/Kotlin, C#, Rust, Ruby, Swift, and more. Use curl for a quick manual API check.'], bullets: ['Node.js/TypeScript — native fetch and straightforward async handlers.', 'Python — requests or httpx, useful for integrations and automation.', 'Go — standard net/http, convenient for a long-running polling service.', 'PHP, Java/Kotlin, C#, Rust, Ruby, and Swift — the same endpoints, Bearer token, and JSON schemas.', 'curl — test authentication, chat access, and message sending without creating a project.'] },
+      { title: 'How bots appear to users', bullets: ['In an empty private chat, a large Start button replaces the composer and creates the first contact with the bot.', 'Bots have no email, “last seen recently” label, online indicator, calling, contact adding, or gifts.', 'Commands are available in the chat menu and are suggested in the composer after typing /.', 'Studio is a dedicated private service chat and cannot be added to a group.'] },
+      { title: 'What developers can do', bullets: ['Manage a bot profile with a name, username, description, commands, and avatar.', 'Use private chats and groups where the bot is installed.', 'Send text, media up to 20 MB, replies, inline buttons, reply keyboards, Force Reply, and Mini Apps.', 'Read, edit, delete, forward, pin messages, and add emoji reactions.', 'Show typing, upload_photo, record_video, and upload_document activity states.', 'Receive events through Telegram-style long polling without a public server or through a webhook.', 'Configure command hints in Studio or programmatically through the API.'] },
+       { title: 'Surf Bot API', paragraphs: ['Base URL: https://surf-app.xyz/api/bot/v1. Every request uses Authorization: Bearer <bot-token>. Successful responses contain ok: true; errors are returned as JSON with an error field and an HTTP status. The API includes /me, /get-chat, /get-message, /get-updates, /ack-update, /commands, /set-commands, /send-message, /send-media, /edit-message, /delete-message, /create-poll, /forward-message, /pin-message, /unpin-message, /set-reaction, /send-chat-action, /webhook-info, /answer-callback, and /verify-web-app.'] },
+       { title: 'Official Node.js and TypeScript SDK', paragraphs: ['The surf-bot-sdk package is available for JavaScript and TypeScript. It has no runtime dependencies and works with Node.js 18+. The SDK handles long polling, command and callback handlers, API types, keyboards, and file uploads. Install it with npm install surf-bot-sdk.'], code: `import { SurfBot, button, buttons } from 'surf-bot-sdk'
+
+const bot = new SurfBot({ token: process.env.SURF_BOT_TOKEN! })
+
+bot.command('start', ctx => ctx.reply('Hello!'))
+
+bot.command('help', ctx => ctx.reply('Choose an action:', {
+  replyMarkup: buttons([
+    button.callback('My profile', 'profile'),
+    button.url('Documentation', 'https://surf-app.xyz/docs'),
+  ]),
+}))
+
+bot.on('callback_query', async ctx => {
+  await ctx.answerCallback()
+  if (ctx.callbackQuery?.data === 'profile') await ctx.edit('Profile opened')
+})
+
+await bot.start()` },
+      { title: 'Official Python, Go, and Rust SDKs', paragraphs: ['Official SDKs for Python, Go, and Rust are now available alongside the Node.js and TypeScript package. They use the same Bot API, support long polling, and provide ready-made command, message, and callback handlers. Source and guides: https://github.com/LaywoodDev/Surf/tree/main/sdk.'], bullets: ['Python — the surf-bot-sdk package has no external runtime dependencies and supports Python 3.10+.', 'Go — github.com/LaywoodDev/Surf/sdk/go provides Client, Bot, handlers, and long polling.', 'Rust — the async surf-bot-sdk package uses reqwest and Tokio with typed update events.', 'If an SDK is not a fit, use direct HTTPS requests against the Surf Bot API.'] },
+      { title: 'Bot storage', paragraphs: ['Every bot has private JSON key-value storage. Data is isolated by bot and by the scope, scopeId, key address. SDK convenience methods use the user scope by default; chat and bot scopes are also available. Values are limited to 64 KiB, and keys accept 1–128 letters, digits, _, ., : and -.'], bullets: ['TypeScript/JavaScript: await bot.storage.set(userId, "cart", { items: 2 }).', 'Python: bot.storage.set(user_id, "cart", { "items": 2 }).', 'Go: bot.Storage.Set(ctx, userID, "cart", map[string]any{"items": 2}).', 'Rust: bot.storage.set(user_id, "cart", serde_json::json!({"items": 2})).', 'Use get, set, and delete for carts, forms, preferences, and conversation state.'] },
+      { title: 'Media, albums, and fileId', paragraphs: ['Bots can send photos, videos, audio, voice messages, and documents through sendMedia or typed SDK helpers. Files up to 20 MB receive a reusable fileId after the first upload, so the bot can send them again without uploading the bytes. Use sendMediaGroup for 2–10 photos or videos.'], bullets: ['TypeScript: sendPhoto, sendVideo, sendVoice, sendDocument, sendMediaGroup.', 'Python, Go, and Rust expose the same typed helpers and send_media_by_id.', 'Voice files are rendered as Surf voice messages with the audio player.', 'A fileId can only be reused by the bot that uploaded it.'] },
+      { title: 'Poll events and webhooks', paragraphs: ['A bot can close its own poll with closePoll and receive poll_vote when someone votes and poll_closed after closing. For production, enable push delivery with POST /set-webhook; Surf signs every JSON request with HMAC-SHA256. Long polling and webhooks are mutually exclusive.'], bullets: ['TypeScript: bot.on("poll_vote", handler), bot.on("poll_closed", handler).', 'Verify X-Surf-Signature against the exact request body.', 'Deduplicate retries by updateId.'] },
+      { title: 'Stories', paragraphs: ['Bots can publish one photo or video to their profile with an optional caption. Stories expire after 24 hours and are visible to the bot’s public audience. Photo uploads are limited to 25 MB and videos to 200 MB.'], bullets: ['TypeScript: sendStoryPhoto, sendStoryVideo, getStories, deleteStory.', 'Python: send_story_photo and send_story_video.', 'Go and Rust expose SendStory/send_story plus Story listing and deletion.', 'Users can view, react, and reply; bots receive story_view, story_reaction, and story_reply updates.'] },
+      { title: 'Group actions', paragraphs: ['In a group, a bot receives only commands and explicit @mentions. POST /create-poll and deleting other people’s messages require the bot to be installed in that group and promoted to administrator. A regular bot can delete and pin only its own messages.'] },
+      { title: 'Mini Apps', paragraphs: ['A Mini App is a regular HTTPS website opened in a built-in Surf window from a bot button. Send an inline button with { text: "Open", webAppUrl: "https://example.com/app" }. The address must be public HTTPS: localhost and private IP addresses are rejected.', 'On mobile, a Mini App opens full screen. On desktop, its window can be moved, resized, or expanded to full screen; the header remains available to close it.', 'Surf places short-lived signed data in the surfWebAppData URL fragment, so it never reaches your web server logs. The Mini App also receives a surf_web_app_init event with the Surf theme and initData. To finish an action, call window.parent.postMessage({ type: "surf_web_app_data", data: JSON.stringify(result) }, "*").'] },
+      { title: 'Deep links', paragraphs: ['Use https://surf-app.xyz/bot/<username>?start=<payload> to open a bot with context. payload accepts 1–64 Latin letters, digits, underscores, and hyphens. After sign-in, Surf creates or opens the private chat and gives the bot a regular message update containing /start <payload>.', 'Use this for invitations, referral codes, website buttons, or a specific Mini App flow. Do not put secrets or personal data in payload: the user can see it in the sent message.'] },
+      { title: 'Validating Mini App data', paragraphs: ['Never trust browser data on its own. Your Mini App server must send initData to POST /api/bot/v1/verify-web-app with Authorization: Bearer <bot-token>. Surf validates the signature, expiry, and bot binding, then returns the user and chat data.', 'After window.parent.postMessage, the bot receives a web_app_data update containing webAppData: { messageId, data }. Data is limited to 4096 characters.'] },
+      { title: 'Commands through the API', paragraphs: ['Commands are shown in the bot profile and chat menu. Read the current list with GET /commands and update it with POST /set-commands. Do not include the leading slash in command; the description explains the action to users.'], code: `await fetch(base + '/set-commands', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    commands: [
+      { command: 'start', description: 'Start the bot' },
+      { command: 'help', description: 'Show help' },
+      { command: 'tasks', description: 'Open my tasks' },
+    ],
+  }),
+})` },
+       { title: 'Which languages can I use?', paragraphs: ['Official SDKs are available for Node.js/TypeScript, Python, Go, and Rust. The API is not tied to a specific library: it uses ordinary HTTPS requests with JSON and multipart/form-data. Any language with an HTTP client and JSON parser works: PHP, Java/Kotlin, C#, Ruby, Swift, and more. Use curl for a quick manual API check.'], bullets: ['Node.js/TypeScript — use surf-bot-sdk or native fetch.', 'Python — use surf-bot-sdk with built-in long polling.', 'Go — use github.com/LaywoodDev/Surf/sdk/go with Client and Bot.', 'Rust — use async surf-bot-sdk with typed update events.', 'curl — test authentication, chat access, and message sending without creating a project.'] },
       {
         title: 'Quick start: Python',
         paragraphs: ['This example uses httpx: install it with pip install httpx. In production, persist offset in a file or database instead of keeping it only in process memory.'],
@@ -447,11 +487,11 @@ curl -X POST https://surf-app.xyz/api/bot/v1/send-message \
   -H "Content-Type: application/json" \
   -d '{"chatId":123,"text":"Hello from curl"}'`,
       },
-      { title: 'Choosing a delivery method', bullets: ['For local development and most small services, use get-updates: no domain, TLS certificate, or public endpoint is needed.', 'For production with multiple service instances, use a webhook or one coordinated polling consumer.', 'Do not run independent polling loops with one offset and no shared lock: they can compete for the same queue.', 'After processing an event, advance offset to updateId + 1. If processing fails, keep the offset and retry the event.'] },
+      { title: 'Choosing a delivery method', bullets: ['For local development and most small services, use get-updates: no domain, TLS certificate, or public endpoint is needed.', 'For production with multiple service instances, use a webhook or one coordinated polling consumer.', 'Use either a webhook or get-updates for a bot, not both at the same time.', 'Do not run independent polling loops with one offset and no shared lock: they can compete for the same queue.', 'After processing an event, advance offset to updateId + 1 or explicitly acknowledge it with POST /ack-update. If processing fails, keep the offset and retry the event.'] },
       { title: 'Production checklist', bullets: ['Keep SURF_BOT_TOKEN only in environment variables or a secret manager.', 'Check both the HTTP status and the ok field in every response.', 'Use exponential backoff for network errors and respect rate limits.', 'Make update handling idempotent: an event can be delivered more than once.', 'Never put tokens or personal data in callbackData.', 'Limit bot actions to the permissions it needs and log only safe identifiers.'] },
       {
         title: 'Quick start: Node.js and long polling',
-        paragraphs: ['Long polling is the primary development method: your bot server does not need a public address. Persist offset after processing each update so a restart does not process the same event again.'],
+        paragraphs: ['Long polling is the primary development method: your bot server does not need a public address. GET /get-updates?offset=0&timeout=30 returns queued events and waits for new ones up to timeout seconds. Persist offset after processing each update so a restart does not process the same event again. For explicit acknowledgement, call POST /ack-update with updateId and start the next request at updateId + 1.'],
         code: `const base = 'https://surf-app.xyz/api/bot/v1'
 const token = process.env.SURF_BOT_TOKEN
 const headers = { Authorization: 'Bearer ' + token }
@@ -517,6 +557,52 @@ if (update.type === 'callback_query') {
 }`,
       },
       {
+        title: 'Reply keyboards',
+        paragraphs: ['A reply keyboard replaces the input field with ready-made actions. Pressing a button sends its text as a regular user message, so handle it in the same message event. Send removeKeyboard: true to remove the keyboard. URL buttons must use HTTPS.'],
+        code: `await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'What should we open?',
+    replyMarkup: {
+      keyboard: [[
+        { text: 'My tasks' },
+        { text: 'Settings' },
+      ], [
+        { text: 'Documentation', url: 'https://surf-app.xyz/docs' },
+      ]],
+      resizeKeyboard: true,
+      persistentKeyboard: true,
+    },
+  }),
+})
+
+// Remove the keyboard
+await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'Keyboard removed',
+    replyMarkup: { removeKeyboard: true },
+  }),
+})`,
+      },
+      {
+        title: 'Force Reply',
+        paragraphs: ['Force Reply does not show buttons. Instead, Surf automatically opens the composer in reply mode for the bot message — useful for forms, follow-up questions, and multi-step flows. The user response arrives as a normal message update with replyToMessageId.'],
+        code: `await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'What is your name?',
+    replyMarkup: { forceReply: true },
+  }),
+})`,
+      },
+      {
         title: 'Media, editing, and deletion',
         paragraphs: ['Use multipart/form-data for a file. A bot can edit or delete only messages sent by that bot. Passing replyMarkup with buttons: [] removes the keyboard from a message.'],
         code: `const form = new FormData()
@@ -548,6 +634,62 @@ await fetch(base + '/delete-message', {
 })`,
       },
       {
+        title: 'Reading, forwarding, and pinning messages',
+        paragraphs: ['GET /get-message returns text, sender, media, reply, and forward metadata. POST /forward-message forwards a message to another chat the bot can access. A bot can pin its own message; pinning someone else’s message requires group administrator rights.'],
+        code: `const message = await fetch(base + '/get-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456 }),
+})
+
+await fetch(base + '/forward-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    fromChatId: 123,
+    messageId: 456,
+    chatId: 789,
+    replyToMessageId: 900,
+  }),
+})
+
+await fetch(base + '/pin-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456 }),
+})
+
+await fetch(base + '/unpin-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456 }),
+})`,
+      },
+      {
+        title: 'Reactions and activity states',
+        paragraphs: ['POST /set-reaction adds or removes a bot reaction from a message. A bot can react only in chats it can access, and the reaction updates for chat participants immediately. POST /send-chat-action shows a short working state; supported values are typing, upload_photo, record_video, and upload_document.'],
+        code: `// Add a reaction
+await fetch(base + '/set-reaction', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456, emoji: '✅' }),
+})
+
+// Remove that reaction
+await fetch(base + '/set-reaction', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456, emoji: '✅', action: 'remove' }),
+})
+
+// Show “typing…” before a longer operation
+await fetch(base + '/send-chat-action', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, action: 'typing' }),
+})`,
+      },
+      {
         title: 'Webhooks: when to use one',
         paragraphs: ['Webhooks are optional. Use one instead of long polling only when you have an HTTPS server. Surf sends X-Surf-Bot-Id, X-Surf-Update-Id, and an HMAC signature in X-Surf-Signature. Verify the signature against the untouched request bytes before JSON.parse.'],
         code: `import crypto from 'node:crypto'
@@ -567,14 +709,14 @@ function validSignature(rawBody, signature, secret) {
 // Store updateId: Surf may retry an event after an error.
 `,
       },
-      { title: 'Commands and BotFather', paragraphs: ['Register command hints with /setcommands, one line at a time in the format command - description. Use /mybots and its buttons for management without typing usernames. The /setname, /setusername, /setdescription, /setuserpic, /setwebhook, /getwebhookinfo, /revoke, and /deletebot commands also support a bot picker menu.'] },
+      { title: 'Commands and Studio', paragraphs: ['Register command hints with /setcommands, one line at a time in the format command - description. Use /mybots and Studio buttons for management without typing usernames. Each bot card has a Groups switch: turn it off to block future group invitations without disabling the bot. Studio is a private service chat for creating and managing bots and cannot be added to groups. The /setname, /setusername, /setdescription, /setuserpic, /setwebhook, /getwebhookinfo, /revoke, and /deletebot commands also support a bot picker menu.'] },
       { title: 'Events and privacy mode', bullets: ['In a private chat, the bot receives messages after the conversation starts.', 'In a group, the bot receives commands and explicit @username mentions.', 'Messages from other bots are not delivered to the bot.', 'Inline button presses arrive as callback_query events with callbackData.', 'Webhooks are optional; they require HTTPS and sign events with HMAC-SHA256.'] },
       { title: 'Token safety', paragraphs: ['Never publish a token in a repository, logs, or client-side code. Surf stores only its hash. If a token is exposed, use /revoke: the old token stops working immediately and the replacement is shown once.'] },
     ],
-    limits: ['Message text is limited to 4096 characters.', 'One file is limited to 20 MB.', 'Inline keyboards support up to 3 rows and 3 buttons per row.', 'A bot cannot write to a chat where it is not installed.', 'Sending is rate-limited per bot and per chat.'],
+    limits: ['Message text is limited to 4096 characters.', 'One file is limited to 20 MB.', 'Inline keyboards support up to 3 rows and 3 buttons per row.', 'Reply keyboards support up to 8 rows and 4 buttons per row.', 'callbackData is limited to 256 bytes; URL buttons must use HTTPS.', 'A bot cannot write to a chat where it is not installed.', 'Sending is rate-limited per bot and per chat.'],
     problems: [
       { issue: 'The bot does not receive a group message', solution: 'Check that the bot is installed in the group and that the message contains a command or an explicit @username mention.' },
-      { issue: 'The token stopped working', solution: 'Check whether it was revoked with /revoke and use only the latest token issued by BotFather.' },
+      { issue: 'The token stopped working', solution: 'Check whether it was revoked with /revoke and use only the latest token issued by Studio.' },
       { issue: 'Should I use a webhook?', solution: 'For most projects, use /get-updates. A webhook is useful only when you prefer to receive HTTPS requests from Surf on your own server.' },
     ],
   },
@@ -779,7 +921,7 @@ function validSignature(rawBody, signature, secret) {
       { title: 'Can Opus read all my chats?', paragraphs: ['Not automatically. Reading chats is a separate permission. When it is disabled, Opus must not analyze your conversations.'] },
       { title: 'Are calls recorded?', paragraphs: ['Not by default. A Surf Pro user can manually start recording from the ••• menu during an active call. The recording, transcript, and report are available only to the user who started it, and only audio after Record is selected is captured.'] },
       { title: 'Can Opus call people for me?', paragraphs: ['Yes, for Surf Pro users. Ask Opus to call one or more people and say what to tell them. Opus reports whether it got through and forwards any reply the other person said. It does not continue the conversation during the call. The assistant voice is chosen in settings.'] },
-      { title: 'How do I create a bot?', paragraphs: ['Open @BotFather, send /newbot, and provide a name followed by a username ending in bot. The token is shown once. For development, use /get-updates without a webhook and send replies through the Surf Bot API.'] },
+      { title: 'How do I create a bot?', paragraphs: ['Open Studio (@BotStudio), send /newbot, and provide a name followed by a username ending in bot. The token is shown once. For development, use /get-updates without a webhook and send replies through the Surf Bot API.'] },
       { title: 'Does Surf use end-to-end encryption?', paragraphs: ['No. End-to-end encryption (E2EE) is not used in the app.'] },
       { title: 'Where can I see the current Pro price?', paragraphs: ['Open Surf Pro inside the product to see current monthly and annual plans.'] },
     ],

@@ -50,7 +50,7 @@ export const docsChapters: DocChapter[] = [
           'Личные и групповые аудиозвонки.',
           'Папки, закреплённые чаты, поиск, опросы и отложенная отправка.',
           'Opus для работы с текстом, файлами, напоминаниями и действиями по разрешению пользователя.',
-          'Нативные боты через @BotFather и Surf Bot API.',
+          'Нативные боты через Studio (@BotStudio) и Surf Bot API.',
           'Адаптивный мобильный интерфейс и установка в формате PWA.',
         ],
       },
@@ -415,22 +415,62 @@ export const docsChapters: DocChapter[] = [
     access: 'Free',
     purpose: 'Подключить собственный сервис к Surf и автоматизировать ответы, команды, уведомления и рабочие процессы.',
     desktop: [
-      'Откройте поиск и начните личный чат с официальным @BotFather.',
+      'Откройте поиск и начните личный чат с официальным Studio (@BotStudio).',
       'Отправьте /newbot, укажите отображаемое имя, затем уникальный username, который заканчивается на bot.',
-      'Сохраните выданный токен: BotFather показывает его только один раз.',
+      'Сохраните выданный токен: Studio показывает его только один раз.',
       'Откройте /mybots и выберите нужного бота для настройки имени, username, описания, команд, аватарки, webhook или токена.',
-      'Добавьте бота в группу через профиль или меню участников. Это может сделать только владелец или администратор группы.',
+      'Добавьте своего бота в группу через профиль или меню участников. Это может сделать только владелец или администратор группы, если владелец бота разрешил приглашения в Studio. Сам Studio в группы не добавляется.',
     ],
     mobile: [
-      'Найдите @BotFather в поиске Surf и откройте личный чат.',
+      'Найдите Studio (@BotStudio) в поиске Surf и откройте личный чат.',
       'Используйте /newbot и последовательно отправьте имя и username.',
       'Для остальных настроек откройте /mybots и выберите бота кнопкой.',
       'Нажмите «Начать» в профиле своего бота, чтобы открыть личный чат.',
     ],
     details: [
-      { title: 'Что доступно разработчику', bullets: ['Профиль бота с именем, username, описанием, командами и аватаркой.', 'Личные чаты и группы, в которых бот установлен.', 'Текстовые сообщения, медиа до 20 МБ, replies и inline-кнопки.', 'Редактирование и удаление собственных сообщений.', 'Статусы typing, upload_photo, record_video и upload_document.', 'Получение событий через Telegram-подобный long polling без публичного сервера.'] },
-      { title: 'Surf Bot API', paragraphs: ['Базовый URL: https://surf-app.xyz/api/bot/v1. Все запросы используют заголовок Authorization: Bearer <bot-token>. Доступны /me, /get-chat, /get-updates, /send-message, /send-media, /edit-message, /delete-message, /send-chat-action, /webhook-info и /answer-callback. Каждый успешный ответ содержит ok: true, ошибки возвращаются JSON с полем error и HTTP-статусом.'] },
-      { title: 'На каких языках можно писать ботов', paragraphs: ['API не привязан к конкретному SDK: это обычные HTTPS-запросы с JSON и multipart/form-data. Подойдёт любой язык с HTTP-клиентом и JSON-парсером: JavaScript/TypeScript, Python, Go, PHP, Java/Kotlin, C#, Rust, Ruby, Swift и другие. Для быстрой проверки API можно использовать curl.'], bullets: ['Node.js/TypeScript — нативный fetch и удобная асинхронная обработка.', 'Python — requests или httpx, удобно для интеграций и автоматизации.', 'Go — стандартный net/http, удобно для постоянного polling-сервиса.', 'PHP, Java/Kotlin, C#, Rust, Ruby и Swift — те же endpoint-ы, Bearer-токен и JSON-схемы.', 'curl — ручная проверка токена, чата и отправки сообщения без проекта.'] },
+      { title: 'Как боты выглядят для пользователей', bullets: ['В пустом личном чате вместо поля ввода показывается крупная кнопка «Начать». Она создаёт первый контакт с ботом.', 'У ботов нет email, статуса «был(а) недавно», индикатора онлайн, звонков, добавления в контакты и подарков.', 'Команды доступны из меню чата и подсказываются прямо в поле ввода после символа /.', 'Studio — отдельный служебный личный чат: его нельзя добавить в группу.'] },
+      { title: 'Что доступно разработчику', bullets: ['Профиль бота с именем, username, описанием, командами и аватаркой.', 'Личные чаты и группы, в которых бот установлен.', 'Текстовые сообщения, медиа до 20 МБ, replies, inline-кнопки, reply-клавиатуры, Force Reply и Mini Apps.', 'Редактирование, удаление, чтение, пересылка, закрепление и emoji-реакции.', 'Статусы typing, upload_photo, record_video и upload_document.', 'Получение событий через Telegram-подобный long polling без публичного сервера или через webhook.', 'Команды можно настроить через Studio или программно через API.'] },
+      { title: 'Surf Bot API', paragraphs: ['Базовый URL: https://surf-app.xyz/api/bot/v1. Все запросы используют заголовок Authorization: Bearer <bot-token>. Каждый успешный ответ содержит ok: true, ошибки возвращаются JSON с полем error и HTTP-статусом. API включает /me, /get-chat, /get-message, /get-updates, /ack-update, /commands, /set-commands, /send-message, /send-media, /edit-message, /delete-message, /create-poll, /forward-message, /pin-message, /unpin-message, /set-reaction, /send-chat-action, /webhook-info, /answer-callback и /verify-web-app.'] },
+      { title: 'Официальный SDK для Node.js и TypeScript', paragraphs: ['Для JavaScript и TypeScript доступен пакет surf-bot-sdk: он не требует runtime-зависимостей и работает на Node.js 18+. SDK берёт на себя long polling, обработку команд и callback-кнопок, типы API, клавиатуры и загрузку файлов. Установите его командой npm install surf-bot-sdk.'], code: `import { SurfBot, button, buttons } from 'surf-bot-sdk'
+
+const bot = new SurfBot({ token: process.env.SURF_BOT_TOKEN! })
+
+bot.command('start', ctx => ctx.reply('Привет!'))
+
+bot.command('help', ctx => ctx.reply('Выберите действие:', {
+  replyMarkup: buttons([
+    button.callback('Мой профиль', 'profile'),
+    button.url('Документация', 'https://surf-app.xyz/docs'),
+  ]),
+}))
+
+bot.on('callback_query', async ctx => {
+  await ctx.answerCallback()
+  if (ctx.callbackQuery?.data === 'profile') await ctx.edit('Профиль открыт')
+})
+
+await bot.start()` },
+      { title: 'Официальные SDK для Python, Go и Rust', paragraphs: ['Помимо Node.js и TypeScript, в репозитории Surf доступны официальные SDK для Python, Go и Rust. Они используют тот же Bot API, поддерживают long polling и дают готовые обработчики команд, сообщений и callback-кнопок. Исходники и инструкции: https://github.com/LaywoodDev/Surf/tree/main/sdk.'], bullets: ['Python — пакет surf-bot-sdk без внешних runtime-зависимостей; поддерживается Python 3.10+.', 'Go — пакет github.com/LaywoodDev/Surf/sdk/go с Client, Bot, обработчиками и long polling.', 'Rust — async-пакет surf-bot-sdk на reqwest и Tokio с типизированными update-событиями.', 'Если SDK не подходит, используйте прямые HTTPS-запросы к Surf Bot API.'] },
+      { title: 'Хранилище данных бота', paragraphs: ['У каждого бота есть приватное JSON-хранилище. Данные изолированы по боту и адресу scope, scopeId, key. По умолчанию SDK используют scope user; также доступны scope chat и bot. Значение ограничено 64 КБ, ключ — 1–128 символов: латиница, цифры, _, ., : и -.'], bullets: ['TypeScript/JavaScript: await bot.storage.set(userId, "cart", { items: 2 }).', 'Python: bot.storage.set(user_id, "cart", { "items": 2 }).', 'Go: bot.Storage.Set(ctx, userID, "cart", map[string]any{"items": 2}).', 'Rust: bot.storage.set(user_id, "cart", serde_json::json!({"items": 2})).', 'Методы get, set и delete подходят для корзин, анкет, настроек и состояния диалога.'] },
+      { title: 'Медиа, альбомы и fileId', paragraphs: ['Бот может отправлять фото, видео, аудио, голосовые и документы через единый sendMedia или типизированные методы SDK. Файл до 20 МБ после первой загрузки получает fileId: его можно повторно отправлять без новой загрузки. Для 2–10 фото или видео используйте sendMediaGroup.'], bullets: ['TypeScript: sendPhoto, sendVideo, sendVoice, sendDocument, sendMediaGroup.', 'Python, Go и Rust: такие же typed helpers и send_media_by_id.', 'Voice-файлы отображаются как голосовые сообщения Surf с аудиоплеером.', 'fileId доступен только тому боту, который загрузил файл.'] },
+      { title: 'События опросов и webhook', paragraphs: ['Бот может закрыть собственный опрос через closePoll и получать poll_vote при голосовании и poll_closed после закрытия. Для production можно включить push-доставку через POST /set-webhook; Surf подписывает каждый JSON-запрос HMAC-SHA256. Long polling и webhook взаимоисключающие.'], bullets: ['TypeScript: bot.on("poll_vote", handler), bot.on("poll_closed", handler).', 'Проверяйте X-Surf-Signature по точному телу запроса.', 'Повторные webhook-доставки нужно дедуплицировать по updateId.'] },
+      { title: 'Истории', paragraphs: ['Боты могут публиковать в профиль одну фотографию или видео с подписью. История живёт 24 часа и видна публичной аудитории бота. Фото ограничено 25 МБ, видео — 200 МБ.'], bullets: ['TypeScript: sendStoryPhoto, sendStoryVideo, getStories, deleteStory.', 'Python: send_story_photo и send_story_video.', 'Go и Rust предоставляют SendStory/send_story, получение и удаление историй.', 'Пользователи могут просматривать истории, ставить реакции и отвечать; бот получает события story_view, story_reaction и story_reply.'] },
+      { title: 'Групповые действия', paragraphs: ['Бот получает в группе только команды и явные @упоминания. Для POST /create-poll и удаления чужих сообщений бот должен быть установлен в группу и назначен её администратором. Обычный бот может удалять и закреплять только собственные сообщения.'] },
+      { title: 'Mini Apps', paragraphs: ['Mini App — обычный HTTPS-сайт, который открывается во встроенном окне Surf по кнопке бота. Передайте в inline-кнопке { text: "Открыть", webAppUrl: "https://example.com/app" }. Адрес должен быть публичным HTTPS: localhost и private IP запрещены.', 'На телефоне Mini App открывается на весь экран. На компьютере окно можно перемещать, менять его размер или раскрывать на весь экран; заголовок остаётся доступным для закрытия.', 'Surf помещает короткоживущие подписанные данные в URL-фрагмент surfWebAppData, поэтому они не попадают в логи вашего веб-сервера. Mini App также получает событие surf_web_app_init с темой Surf и initData. Для завершения действия вызовите window.parent.postMessage({ type: "surf_web_app_data", data: JSON.stringify(result) }, "*").'] },
+      { title: 'Deep links', paragraphs: ['Используйте ссылку https://surf-app.xyz/bot/<username>?start=<payload>, чтобы открыть бота с контекстом. payload содержит от 1 до 64 символов: латинские буквы, цифры, _ и -. После входа Surf создаёт или открывает личный чат и передаёт боту обычное message-событие с текстом /start <payload>.', 'Это удобно для приглашений, реферальных кодов, кнопок на сайте и запуска конкретного сценария Mini App. Не помещайте в payload секреты или персональные данные: он виден пользователю в отправленном сообщении.'] },
+      { title: 'Проверка Mini App данных', paragraphs: ['Не доверяйте данным только из браузера. Сервер Mini App должен отправить initData в POST /api/bot/v1/verify-web-app с Authorization: Bearer <bot-token>. Surf проверит подпись, срок действия и принадлежность боту, затем вернёт данные пользователя и чата.', 'После window.parent.postMessage бот получает update типа web_app_data с полем webAppData: { messageId, data }. Данные ограничены 4096 символами.'] },
+      { title: 'Команды через API', paragraphs: ['Команды показываются пользователю в профиле бота и в меню чата. Получите текущий список через GET /commands, а обновите его через POST /set-commands. Команда должна быть без начального слеша; описание помогает пользователю понять действие.'], code: `await fetch(base + '/set-commands', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    commands: [
+      { command: 'start', description: 'Начать работу' },
+      { command: 'help', description: 'Показать помощь' },
+      { command: 'tasks', description: 'Открыть мои задачи' },
+    ],
+  }),
+})` },
+      { title: 'На каких языках можно писать ботов', paragraphs: ['Официальные SDK доступны для Node.js/TypeScript, Python, Go и Rust. API не привязан к конкретной библиотеке: это обычные HTTPS-запросы с JSON и multipart/form-data. Подойдёт любой язык с HTTP-клиентом и JSON-парсером: PHP, Java/Kotlin, C#, Ruby, Swift и другие. Для быстрой проверки API можно использовать curl.'], bullets: ['Node.js/TypeScript — surf-bot-sdk или нативный fetch.', 'Python — surf-bot-sdk со встроенным long polling.', 'Go — github.com/LaywoodDev/Surf/sdk/go с Client и Bot.', 'Rust — async surf-bot-sdk с типизированными update-событиями.', 'curl — ручная проверка токена, чата и отправки сообщения без проекта.'] },
       {
         title: 'Быстрый старт: Python',
         paragraphs: ['Пример использует httpx: установите зависимость командой pip install httpx. В production сохраняйте offset в файл или базе данных, а не только в памяти процесса.'],
@@ -503,11 +543,11 @@ curl -X POST https://surf-app.xyz/api/bot/v1/send-message \
   -H "Content-Type: application/json" \
   -d '{"chatId":123,"text":"Привет из curl"}'`,
       },
-      { title: 'Как выбрать способ доставки', bullets: ['Для локальной разработки и большинства небольших сервисов используйте get-updates: не нужен домен, TLS-сертификат и отдельный endpoint.', 'Для production с несколькими экземплярами сервиса используйте webhook или распределённый polling с одним consumer.', 'Не запускайте несколько независимых polling-циклов с одним offset без общей блокировки: они могут конкурировать за одну очередь.', 'После обработки события увеличивайте offset на updateId + 1. При ошибке обработки можно не увеличивать offset и повторить событие.'] },
+      { title: 'Как выбрать способ доставки', bullets: ['Для локальной разработки и большинства небольших сервисов используйте get-updates: не нужен домен, TLS-сертификат и отдельный endpoint.', 'Для production с несколькими экземплярами сервиса используйте webhook или распределённый polling с одним consumer.', 'Webhook и get-updates используются поочерёдно: выберите один способ доставки для конкретного бота.', 'Не запускайте несколько независимых polling-циклов с одним offset без общей блокировки: они могут конкурировать за одну очередь.', 'После обработки события увеличивайте offset на updateId + 1 или явно подтвердите его через POST /ack-update. При ошибке обработки сохраните offset и повторите событие.'] },
       { title: 'Production-чеклист', bullets: ['Храните SURF_BOT_TOKEN только в переменных окружения или секрет-хранилище.', 'Проверяйте HTTP-статус и поле ok в каждом ответе.', 'Добавьте exponential backoff при сетевых ошибках и уважайте rate limit.', 'Делайте обработку update идемпотентной: одно событие может прийти повторно.', 'Не помещайте токены и персональные данные в callbackData.', 'Ограничьте исходящие действия бота собственными правами и логируйте только безопасные идентификаторы.'] },
       {
         title: 'Быстрый старт: Node.js и long polling',
-        paragraphs: ['Long polling — основной способ разработки: серверу бота не нужен публичный адрес. Храните offset после обработки каждого события, чтобы после перезапуска не обработать его повторно.'],
+        paragraphs: ['Long polling — основной способ разработки: серверу бота не нужен публичный адрес. GET /get-updates?offset=0&timeout=30 возвращает очередь событий и ждёт новые события до timeout секунд. Храните offset после обработки каждого события, чтобы после перезапуска не обработать его повторно. Для явного подтверждения используйте POST /ack-update с updateId; следующий запрос начинайте с updateId + 1.'],
         code: `const base = 'https://surf-app.xyz/api/bot/v1'
 const token = process.env.SURF_BOT_TOKEN
 const headers = { Authorization: 'Bearer ' + token }
@@ -573,6 +613,52 @@ if (update.type === 'callback_query') {
 }`,
       },
       {
+        title: 'Reply-клавиатура',
+        paragraphs: ['Reply-клавиатура заменяет поле ввода готовыми действиями. Нажатие отправляет текст кнопки как обычное сообщение пользователя, поэтому его можно обработать в том же message-событии. Для удаления клавиатуры отправьте removeKeyboard: true. URL-кнопки должны вести только на HTTPS-адреса.'],
+        code: `await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'Что открыть?',
+    replyMarkup: {
+      keyboard: [[
+        { text: 'Мои задачи' },
+        { text: 'Настройки' },
+      ], [
+        { text: 'Документация', url: 'https://surf-app.xyz/docs' },
+      ]],
+      resizeKeyboard: true,
+      persistentKeyboard: true,
+    },
+  }),
+})
+
+// Убрать клавиатуру
+await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'Клавиатура убрана',
+    replyMarkup: { removeKeyboard: true },
+  }),
+})`,
+      },
+      {
+        title: 'Force Reply',
+        paragraphs: ['Force Reply не показывает кнопок. Вместо этого Surf автоматически открывает поле ввода в режиме ответа на сообщение бота — удобно для формы, уточняющего вопроса или следующего шага сценария. Ответ пользователя придёт как обычное message-событие с replyToMessageId.'],
+        code: `await fetch(base + '/send-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    chatId: update.chat.id,
+    text: 'Как вас зовут?',
+    replyMarkup: { forceReply: true },
+  }),
+})`,
+      },
+      {
         title: 'Медиа, редактирование и удаление',
         paragraphs: ['Для файла используйте multipart/form-data. Бот может менять или удалять только сообщения, отправленные этим же ботом. Пустой replyMarkup с buttons: [] снимает кнопки с сообщения.'],
         code: `const form = new FormData()
@@ -604,6 +690,62 @@ await fetch(base + '/delete-message', {
 })`,
       },
       {
+        title: 'Чтение, пересылка и закрепление сообщений',
+        paragraphs: ['GET /get-message возвращает текст, автора, медиа, reply и forward-метаданные. POST /forward-message пересылает сообщение в другой доступный чат. Бот может закрепить собственное сообщение; для закрепления чужого сообщения нужны права администратора группы.'],
+        code: `const message = await fetch(base + '/get-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456 }),
+})
+
+await fetch(base + '/forward-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    fromChatId: 123,
+    messageId: 456,
+    chatId: 789,
+    replyToMessageId: 900,
+  }),
+})
+
+await fetch(base + '/pin-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456 }),
+})
+
+await fetch(base + '/unpin-message', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456 }),
+})`,
+      },
+      {
+        title: 'Реакции и статус действия',
+        paragraphs: ['POST /set-reaction добавляет или удаляет реакцию бота на сообщение. Бот может реагировать только в чатах, к которым у него есть доступ. Реакции сразу обновляются у участников чата. POST /send-chat-action показывает краткий статус работы бота; поддерживаются typing, upload_photo, record_video и upload_document.'],
+        code: `// Добавить реакцию
+await fetch(base + '/set-reaction', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456, emoji: '✅' }),
+})
+
+// Убрать эту реакцию
+await fetch(base + '/set-reaction', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, messageId: 456, emoji: '✅', action: 'remove' }),
+})
+
+// Показать «печатает…» перед долгой операцией
+await fetch(base + '/send-chat-action', {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ chatId: 123, action: 'typing' }),
+})`,
+      },
+      {
         title: 'Webhook: когда он нужен',
         paragraphs: ['Webhook необязателен. Используйте его вместо long polling только при наличии HTTPS-сервера. Surf отправляет X-Surf-Bot-Id, X-Surf-Update-Id и HMAC-подпись тела в X-Surf-Signature. Проверяйте подпись по исходным байтам запроса до JSON.parse.'],
         code: `import crypto from 'node:crypto'
@@ -623,11 +765,11 @@ function validSignature(rawBody, signature, secret) {
 // Сохраните updateId: Surf может повторить событие при ошибке.
 ` ,
       },
-      { title: 'Команды и BotFather', paragraphs: ['Зарегистрируйте подсказки команд через /setcommands: по одной строке в формате command - description. Для управления без ручного ввода используйте /mybots и кнопки. Команды /setname, /setusername, /setdescription, /setuserpic, /setwebhook, /getwebhookinfo, /revoke и /deletebot также поддерживают меню выбора бота.'] },
+      { title: 'Команды и Studio', paragraphs: ['Зарегистрируйте подсказки команд через /setcommands: по одной строке в формате command - description. Для управления без ручного ввода используйте /mybots и кнопки Studio. В карточке бота есть переключатель «Группы»: выключите его, чтобы запретить приглашать бота в новые группы, не отключая самого бота. Studio — служебный личный чат для создания и управления ботами; его нельзя добавлять в группы. Команды /setname, /setusername, /setdescription, /setuserpic, /setwebhook, /getwebhookinfo, /revoke и /deletebot также поддерживают меню выбора бота.'] },
       { title: 'События и privacy mode', bullets: ['В личном чате бот получает сообщения после начала диалога.', 'В группе бот получает команды и явные упоминания @username.', 'Сообщения от других ботов не доставляются боту.', 'Нажатие inline-кнопки приходит как callback_query с callbackData.', 'Webhook можно подключить дополнительно; он требует HTTPS и подписывает события HMAC-SHA256.'] },
       { title: 'Безопасность токена', paragraphs: ['Токен нельзя публиковать в репозитории, логах или клиентском коде. В Surf хранится только его хеш. Если токен раскрыт, используйте /revoke: старый токен сразу перестанет работать, а новый будет показан один раз.'] },
     ],
-    limits: ['Текст сообщения — до 4096 символов.', 'Один файл — до 20 МБ.', 'До 3 рядов inline-кнопок и до 3 кнопок в каждом ряду.', 'Бот не может писать в чат, где он не установлен.', 'Отправка ограничивается лимитом на бота и отдельный чат.'],
+    limits: ['Текст сообщения — до 4096 символов.', 'Один файл — до 20 МБ.', 'До 3 рядов inline-кнопок и до 3 кнопок в каждом ряду.', 'Reply-клавиатура — до 8 рядов и до 4 кнопок в ряду.', 'callbackData — до 256 байт; URL-кнопки используют только HTTPS.', 'Бот не может писать в чат, где он не установлен.', 'Отправка ограничивается лимитом на бота и отдельный чат.'],
     problems: [
       { issue: 'Бот не получает сообщение в группе', solution: 'Проверьте, что бот установлен в группе, а сообщение содержит команду или явное @упоминание его username.' },
       { issue: 'Токен перестал работать', solution: 'Проверьте, не был ли он отозван через /revoke, и используйте только последний выданный токен.' },
@@ -843,7 +985,7 @@ function validSignature(rawBody, signature, secret) {
       { title: 'Opus видит все мои чаты?', paragraphs: ['Нет автоматически. Чтение чатов — отдельная категория доступа. Если она отключена, Opus не должен анализировать переписку.'] },
       { title: 'Записываются ли звонки?', paragraphs: ['По умолчанию — нет. Пользователь Surf Pro может вручную начать запись через меню ••• во время активного звонка. Запись, расшифровка и отчёт доступны только запустившему её пользователю; записывается только разговор после нажатия Record.'] },
       { title: 'Может ли Opus позвонить за меня?', paragraphs: ['Да, у пользователей Surf Pro. Попросите Opus позвонить одному или нескольким людям и сказать нужный текст. Он сообщит, получилось ли дозвониться, и передаст вам ответ, если собеседник что-то сказал. В самом звонке Opus не продолжает разговор. Голос ассистента выбирается в настройках.'] },
-      { title: 'Как создать бота?', paragraphs: ['Откройте @BotFather, отправьте /newbot и последовательно укажите имя и username, оканчивающийся на bot. Токен показывается один раз. Для разработки можно использовать /get-updates без webhook, а затем отправлять ответы через Surf Bot API.'] },
+      { title: 'Как создать бота?', paragraphs: ['Откройте Studio (@BotStudio), отправьте /newbot и последовательно укажите имя и username, оканчивающийся на bot. Токен показывается один раз. Для разработки можно использовать /get-updates без webhook, а затем отправлять ответы через Surf Bot API.'] },
       { title: 'Surf использует сквозное шифрование?', paragraphs: ['Нет. Сквозное шифрование (E2EE) в приложении не используется.'] },
       { title: 'Где посмотреть цену Pro?', paragraphs: ['В разделе Surf Pro внутри продукта. Там должны отображаться актуальные месячный и годовой планы.'] },
     ],
